@@ -21,7 +21,7 @@
         var me = this;
 
         PhoneGap.exec(
-            function init(device) {
+            function (device) {
                 me.platform = device.platform
                 me.version  = device.version;
                 me.name     = device.name;
@@ -32,7 +32,7 @@
                 console.log("Error initializing PhoneGap: " + e);
                 alert("Error initializing PhoneGap: " + e);
             }, 
-            "device", "init"
+            "device", "getDeviceInfo"
         );
 
     };
