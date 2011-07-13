@@ -21,8 +21,8 @@
         this.platform = phonegap.device.platform;
         this.version  = blackberry.system.softwareVersion;
         this.name     = blackberry.system.model;
-        this.uuid     = phonegap.device.uuid;
-        this.phonegap = phonegap.device.phonegap;
+        this.uuid     = blackberry.identity.PIN;
+        this.phonegap = "1.0.0rc1";
     };
 
     /**
