@@ -18,11 +18,23 @@
      * @constructor
      */
     function Device() {
-        this.platform = phonegap.device.platform;
-        this.version  = blackberry.system.softwareVersion;
-        this.name     = blackberry.system.model;
-        this.uuid     = phonegap.device.uuid;
-        this.phonegap = phonegap.device.phonegap;
+        var me = this;
+
+        PhoneGap.exec(
+            function (device) {
+                me.platform = device.platform
+                me.version  = device.version;
+                me.name     = device.name;
+                me.uuid     = device.uuid;
+                me.phonegap = device.phonegap;
+            },
+            function (e) {
+                console.log("Error initializing PhoneGap: " + e);
+                alert("Error initializing PhoneGap: " + e);
+            }, 
+            "Device", "getDeviceInfo"
+        );
+
     };
 
     /**

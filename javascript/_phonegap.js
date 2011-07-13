@@ -304,29 +304,29 @@ var PhoneGap = PhoneGap || (function() {
      * When BlackBerry WebWorks application is brought to foreground, 
      * fire onResume event.
      */
-    blackberry.app.event.onForeground(function() {
+   /* blackberry.app.event.onForeground(function() {
         PhoneGap.onResume.fire();
         
         // notify PhoneGap JavaScript Extension
         phonegap.PluginManager.resume();
-    });
+    });*/
 
     /**
      * When BlackBerry WebWorks application is sent to background, 
      * fire onPause event.
      */
-    blackberry.app.event.onBackground(function() {
+    /*blackberry.app.event.onBackground(function() {
        PhoneGap.onPause.fire();
        
        // notify PhoneGap JavaScript Extension
        phonegap.PluginManager.pause();
-    });
+    });*/
 
     /**
      * Trap BlackBerry WebWorks exit. Fire onPause event, and give PhoneGap
      * extension chance to clean up before exiting.
      */
-    blackberry.app.event.onExit(function() {
+    /*blackberry.app.event.onExit(function() {
         PhoneGap.onPause.fire();
 
         // allow PhoneGap JavaScript Extension opportunity to cleanup
@@ -334,7 +334,7 @@ var PhoneGap = PhoneGap || (function() {
         
         // exit the app
         blackberry.app.exit();
-    });
+    });*/
     
     //--------
     // Plugins
@@ -470,7 +470,7 @@ var PhoneGap = PhoneGap || (function() {
     PhoneGap.exec = function(success, fail, service, action, args) {
         try {
             // Note: Device returns string, but for some reason emulator returns object - so convert to string.
-            var v = ""+phonegap.PluginManager.exec(success, fail, service, action, args);            
+            var v = phonegap.PluginManager.exec(success, fail, service, action, args);            
             
 			// If status is OK, then return value back to caller
 			if (v.status == PhoneGap.callbackStatus.OK) {
@@ -486,9 +486,9 @@ var PhoneGap = PhoneGap || (function() {
 
 				}
 				return v.message;
-			}
+			}else if (v.status == PhoneGap.callbackStatus.NO_RESULT){
 			// If error, then display error
-			else {
+			}else {
 				console.log("Error: Status="+v.status+" Message="+v.message);
 
 				// If there is a fail callback, then call it now with returned value
