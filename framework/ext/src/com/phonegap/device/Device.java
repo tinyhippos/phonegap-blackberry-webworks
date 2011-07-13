@@ -27,12 +27,6 @@ public final class Device extends Scriptable {
 		if (name.equals(FIELD_PLATFORM)) {
 			return new String(DeviceInfo.getPlatformVersion());
 		}
-		else if (name.equals(FIELD_UUID)) {
-			return new Integer(DeviceInfo.getDeviceId());
-		}
-		else if (name.equals(FIELD_PHONEGAP)) {
-			return "1.0.0rc1";
-		}
 		
 		return super.getField(name);
 	}
