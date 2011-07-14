@@ -1,15 +1,17 @@
-phonegap.PluginManager = { function (){
+if(!window.phonegap) window.phonegap = {};
+
+phonegap.PluginManager = (function (){
 
 	this.PluginManager = function() {
 	};
 	
 	PluginManager.prototype.exec = function(win, fail, clazz, action, args) {
 		if(plugins[clazz]){
-			return PhoneGap.plugins[clazz].execute(action, args, win, fail);
+			return plugins[clazz].execute(action, args, win, fail);
 		}else{
 			return {"status" : 2, "message" : "Class " + clazz+ " cannot be found"};
 		}
-	}
+	};
 
 	cameraAPI = {
 		execute: function(action, args, win, fail) {
@@ -22,30 +24,30 @@ phonegap.PluginManager = { function (){
 					fail();
 			}      
 		}
-	}
+    };
 
-	deviceAPI = {
+    deviceAPI = {
 		execute: function(action, args, win, fail) {
 			var actionFound = false;
 			switch(action) {
-				case 'getDeviceInfo':				
-					win({"version" : blackberry.system.softwareVersion,
-						 "name" : blackberry.system.model,
-						 "uuid" : blackberry.identity.PIN,
-						 "phoneGap" : "1.0.0rc1"});
-					return { "status" : 1, "message" : "WebWorks is On It"};
+                case 'getDeviceInfo':						
+					return { "status" : 1, "message" : {"version" : blackberry.system.softwareVersion,
+														"name" : blackberry.system.model,
+														"uuid" : blackberry.identity.PIN,
+														"phonegap" : "1.0.0rc1"}};
 				default:
 					fail();
 			}   
 		}
-	}
+    };
 
-	PhoneGap.plugins = {};
-	PhoneGap.plugins['Camera'] = cameraAPI;
-	PhoneGap.plugins['Device'] = deviceAPI;
+	var plugins = {
+		'Camera' : cameraAPI,
+		'Device' : deviceAPI
+	};
 	
 	//Instantiate it
 	return new PluginManager();
-}();
+}());
 
 
