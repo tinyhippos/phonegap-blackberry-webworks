@@ -470,7 +470,7 @@ var PhoneGap = PhoneGap || (function() {
     PhoneGap.exec = function(success, fail, service, action, args) {
         try {
             // Note: Device returns string, but for some reason emulator returns object - so convert to string.
-            var v = ""+phonegap.PluginManager.exec(success, fail, service, action, args);            
+            var v = phonegap.PluginManager.exec(success, fail, service, action, args);            
             
 			// If status is OK, then return value back to caller
 			if (v.status == PhoneGap.callbackStatus.OK) {
@@ -486,9 +486,9 @@ var PhoneGap = PhoneGap || (function() {
 
 				}
 				return v.message;
-			}
+            }else if (v.status == PhoneGap.callbackStatus.NO_RESULT){
 			// If error, then display error
-			else {
+			}else {
 				console.log("Error: Status="+v.status+" Message="+v.message);
 
 				// If there is a fail callback, then call it now with returned value

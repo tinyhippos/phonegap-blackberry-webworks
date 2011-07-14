@@ -32,7 +32,7 @@
                 console.log("Error initializing PhoneGap: " + e);
                 alert("Error initializing PhoneGap: " + e);
             }, 
-            "device", "getDeviceInfo"
+            "Device", "getDeviceInfo"
         );
 
     };
