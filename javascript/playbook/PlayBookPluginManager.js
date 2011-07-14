@@ -57,11 +57,9 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 						connection = Connection.WIFI;
 						event = "online";
 					}
-                    return { "status" : 1, "message" : {"type":connection, "event":event } };
-                
-				
+                    return { "status" : 1, "message" : {"type":connection, "event":event } };                
 				default:
-					fail();						
+					fail();
 			}   
 		}
 	};
@@ -71,7 +69,6 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 		'Device' : deviceAPI,
 		'Network Status' : networkAPI
 	};
-	
 	//Instantiate it
 	return new PlayBookPluginManager();
 })(phonegap.PluginManager);
