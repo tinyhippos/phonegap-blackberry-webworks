@@ -1,3 +1,11 @@
+/*
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * 
+ * Copyright (c) 2011, Research In Motion Limited.
+ */
+
+
 if(!window.phonegap) window.phonegap = {};
 
 phonegap.PluginManager = (function(webworksPluginManager) {
@@ -57,6 +65,9 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 						connection = Connection.WIFI;
 						event = "online";
 					}
+					
+					blackberry.events.registerEventHandler(networkChange, eventCallback, eventParams);
+					
                     return { "status" : 1, "message" : {"type":connection, "event":event } };
                 
 				
