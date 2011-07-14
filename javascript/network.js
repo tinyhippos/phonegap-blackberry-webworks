@@ -70,11 +70,12 @@ Connection = {
      * @constructor
      */
     var NetworkConnection = function() {
+        var _firstRun = true;
+        
         this.type = null;
-        this._firstRun = true;
 
         var me = this;
-        this.getInfo(
+        PhoneGap.exec(
             function(info) {
                 me.type = info.type;
                 if (typeof info.event !== "undefined") {
@@ -82,25 +83,16 @@ Connection = {
                 }
 
                 // should only fire this once
-                if (me._firstRun) {
-                    me._firstRun = false;
+                if (_firstRun) {
+                    _firstRun = false;
                     PhoneGap.onPhoneGapConnectionReady.fire();
                 }
             },
             function(e) {
                 console.log("Error initializing Network Connection: " + e);
-            });
-    };
-
-    /**
-     * Get connection info
-     *
-     * @param {Function} successCallback The function to call when the Connection data is available
-     * @param {Function} errorCallback The function to call when there is an error getting the Connection data. (OPTIONAL)
-     */
-    NetworkConnection.prototype.getInfo = function(successCallback, errorCallback) {
-        // Get info
-        PhoneGap.exec(successCallback, errorCallback, "Network Status", "getConnectionInfo", []);
+            },
+            "Network Status", "getConnectionInfo", []
+        );
     };
 
     /**
