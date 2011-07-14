@@ -1,6 +1,4 @@
-if(!window.phonegap) window.phonegap = {};
-
-phonegap.PluginManager = (function (){
+(function (){
 
 	this.PluginManager = function() {
 	};
@@ -12,23 +10,28 @@ phonegap.PluginManager = (function (){
 			return {"status" : 2, "message" : "Class " + clazz+ " cannot be found"};
 		}
 	};
-
-	cameraAPI = {
+    
+    PluginManager.prototype.resume = function(){};
+    PluginManager.prototype.pause = function(){};
+    PluginManager.prototype.destroy = function(){};
+    
+    var returnObjAsyncCall = { "status" : 0, "message" : "WebWorks Is On It" };
+    var returnObjInvalidAction = { "status" : 7, "message" : "Action not found" };
+    
+    var cameraAPI = {
 		execute: function(action, args, win, fail) {
-			var actionFound = false;
 			switch(action) {
-				case 'getPicture':
-					blackberry.media.camera.takePicture(win, null, fail);
-					return { "status" : 0, "message" : "WebWorks is On It"};
+				case 'takePicture':
+					blackberry.media.camera.takePicture(win, fail, fail);
+					return returnObjAsyncCall;
 				default:
 					fail();
 			}      
 		}
     };
 
-    deviceAPI = {
+    var deviceAPI = {
 		execute: function(action, args, win, fail) {
-			var actionFound = false;
 			switch(action) {
                 case 'getDeviceInfo':						
 					return { "status" : 1, "message" : {"version" : blackberry.system.softwareVersion,
@@ -36,18 +39,33 @@ phonegap.PluginManager = (function (){
 														"uuid" : blackberry.identity.PIN,
 														"phonegap" : "1.0.0rc1"}};
 				default:
-					fail();
+					return returnObjInvalidAction;
 			}   
+		}
+    };
+    
+    var notificationAPI = {
+        execute: function(action, args, win, fail) {
+			switch(action) {
+                case 'alert':						
+                    blackberry.ui.dialog.customAskAsync.apply(window,args);
+                    break;
+                case 'confirm':						
+                    blackberry.ui.dialog.customAskAsync.apply(window,args);
+                    break;
+				default:
+					return returnObjInvalidAction;
+			}  
+            
+            return returnObjAsyncCall;
 		}
     };
 
 	var plugins = {
 		'Camera' : cameraAPI,
-		'Device' : deviceAPI
+		'Device' : deviceAPI,
+        'Notification' : notificationAPI
 	};
-	
-	//Instantiate it
-	return new PluginManager();
 }());
 
 

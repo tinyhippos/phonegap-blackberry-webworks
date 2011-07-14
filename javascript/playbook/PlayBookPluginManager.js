@@ -4,22 +4,28 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 	
 	this.PlayBookPluginManager = function() {
 		PhoneGap.onNativeReady.fire();
+        //H@x Attack!! this should be done in Network
+        PhoneGap.onPhoneGapConnectionReady.fire();
 	};
 	
 	PlayBookPluginManager.prototype.exec = function(win, fail, clazz, action, args) {
 		if(plugins[clazz]){
             return plugins[clazz].execute(action, args, win, fail);
 		}else{
-			return {"status" : 2, "message" : "Class " + clazz+ " cannot be found"};
+			return webworksPluginManager.exec(win, fail, clazz, action, args);
 		}
 	};
+    
+    PlayBookPluginManager.prototype.resume = function(){};
+    PlayBookPluginManager.prototype.pause = function(){};
+    PlayBookPluginManager.prototype.destroy = function(){};
 	
 	PlayBookPluginManager.prototype.callback = function(success, win, fail) {
 		if (!success) 
 			fail();    
     };
 
-	deviceAPI = {
+	var deviceAPI = {
 		execute: function(action, args, win, fail) {
 			var actionFound = false;
 			switch(action) {
@@ -30,15 +36,14 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 							"message" : webWorksResult};
 				default:
 					fail();						
-			}   
+			}  
 		}
 	};
 	
     var plugins = {
-		'Camera' : cameraAPI,
 		'Device' : deviceAPI
 	};
 	
 	//Instantiate it
 	return new PlayBookPluginManager();
-})(phonegap.PluginManager);
+})(new PluginManager());

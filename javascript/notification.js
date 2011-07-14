@@ -36,7 +36,8 @@
     Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
         var _title = (title || "Alert");
         var _buttonLabel = (buttonLabel || "OK");
-        PhoneGap.exec(completeCallback, null, 'Notification', 'alert', [message, _title, _buttonLabel]);
+        //customAskAsync(message : String, buttons : String[], [onOptionSelected: function], [settings: Object])
+        PhoneGap.exec(completeCallback, null, 'Notification', 'alert', [message, [_buttonLabel], completeCallback, {"title" : _title} ]);
     };
 
     /**
@@ -49,7 +50,8 @@
     Notification.prototype.confirm = function(message, resultCallback, title, buttonLabels) {
         var _title = (title || "Confirm");
         var _buttonLabels = (buttonLabels || "OK,Cancel");
-        return PhoneGap.exec(resultCallback, null, 'Notification', 'confirm', [message, _title, _buttonLabels]);
+         //customAskAsync(message : String, buttons : String[], [onOptionSelected: function], [settings: Object])
+        return PhoneGap.exec(resultCallback, null, 'Notification', 'confirm',[message, [_buttonLabel], completeCallback, {"title" : _title} ]);
     };
     
     /**
