@@ -66,6 +66,7 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 						event = "online";
 					}
 					
+					//Register an event handler for the networkChange event
 					blackberry.events.registerEventHandler(networkChange, eventCallback, eventParams);
 					
                     return { "status" : 1, "message" : {"type":connection, "event":event } };
