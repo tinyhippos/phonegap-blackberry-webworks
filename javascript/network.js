@@ -30,30 +30,6 @@ Connection = {
  * navigator.network
  */
 (function() {
-
-	var _self = {
-	
-		
-		/**
-		 * Determine if a URI is reachable over the network.
-		 *
-		 * @param {Object} uri
-		 * @param {Function} callback
-		 * @param {Object} options  (isIpAddress:boolean)
-		 */
-		isReachable: function (uri, callback, options) {
-			var isIpAddress = false;
-			if (options && options.isIpAddress) {
-				isIpAddress = options.isIpAddress;
-			}
-			PhoneGap.exec(callback, null, 'Network Status', 'isReachable', [uri, isIpAddress]);
-		},
-		
-		init: function () {
-			return _self;
-		}
-	};
-	
     /**
      * Check to see that navigator.network has not been initialized.
      */
