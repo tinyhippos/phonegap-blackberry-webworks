@@ -72,21 +72,14 @@ Connection = {
     var NetworkConnection = function() {
         var _firstRun = true;
         
-        this.type = null;
+        this.type = connection.UNKNOWN;
 
         var me = this;
         PhoneGap.exec(
-            function(info) {
-                me.type = info.type;
-                if (typeof info.event !== "undefined") {
-                    PhoneGap.fireEvent(info.event);
-                }
+            function(type) {
+                me.type = type;
 
-                // should only fire this once
-                if (_firstRun) {
-                    _firstRun = false;
-                    PhoneGap.onPhoneGapConnectionReady.fire();
-                }
+                PhoneGap.onPhoneGapConnectionReady.fire();
             },
             function(e) {
                 console.log("Error initializing Network Connection: " + e);
@@ -94,6 +87,21 @@ Connection = {
             "Network Status",
             "getConnectionInfo"
         );
+
+
+        PhoneGap.exec(
+            function(event) {
+                if (event) {
+                    me.type = event === "offline" ? connection.NONE : connection.WIFI;
+                    PhoneGap.fireEvent(event);
+                }
+            },
+            function(e) {
+                console.log("Error registering for online / offline event: " + e);
+            },
+            "Network Status", 
+            "registerNetworkChangeEvent"
+         );
     };
 
     /**
