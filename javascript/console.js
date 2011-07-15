@@ -4,7 +4,8 @@
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
- * Copyright (c) 2010-2011, IBM Corporation
+ * Copyright (c) 2010-2011, IBM Corporation 
+ * Copyright (c) 2010-2011, Research In Motion Limited
  */
 
 /**
@@ -13,13 +14,32 @@
  */ 
 phonegap.Logger.enable();
 
-/**
- * If Blackberry doesn't define a console object, we create our own.
- * console.log will use phonegap.Logger to log to BB Event Log and System.out.
- */
-if (typeof console == "undefined") {    
-    console = {};
-}
-console.log = function(msg) {
-    phonegap.Logger.log(''+msg);
-};
+(function(){
+    if(typeof(phonegap.Logger) !== 'undefined') {
+        return;
+    }
+    
+    function Logger() {
+        /**
+         * If Blackberry doesn't define a console object, we create our own.
+         * console.log will use phonegap.Logger to log to BB Event Log and System.out.
+         */
+        if (typeof console == "undefined") {    
+            console = {};
+        }
+        console.log = function(msg) {
+            phonegap.Logger.log(''+msg);
+        };
+    }
+    
+    Logger.prototype.log(msg) {
+        PhoneGap.exec(null, null, 'Logger', 'log', msg);
+    }
+    
+    /**
+     * Define phonegap.Logger object where the BB API expects to see it
+     */
+    PhoneGap.addConstructor(function() {
+        phonegap.Logger = new Logger();
+    });
+}());
