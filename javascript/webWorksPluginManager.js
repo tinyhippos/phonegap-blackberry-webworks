@@ -8,15 +8,15 @@
 			return plugins[clazz].execute(action, args, win, fail);
 		}
         
-        return {"status" : 2, "message" : "Class " + clazz+ " cannot be found"};
+        return {"status" : PhoneGap.callbackStatus.CLASS_NOT_FOUND_EXCEPTION, "message" : "Class " + clazz+ " cannot be found"};
 	};
     
     PluginManager.prototype.resume = function(){};
     PluginManager.prototype.pause = function(){};
     PluginManager.prototype.destroy = function(){};
     
-    var retAsyncCall = { "status" : 0, "message" : "WebWorks Is On It" };
-    var retInvalidAction = { "status" : 7, "message" : "Action not found" };
+    var retAsyncCall = { "status" : PhoneGap.callbackStatus.NO_RESULT, "message" : "WebWorks Is On It" };
+    var retInvalidAction = { "status" : PhoneGap.callbackStatus.INVALID_ACTION, "message" : "Action not found" };
     
     var cameraAPI = {
 		execute: function(action, args, win, fail) {
