@@ -10,6 +10,10 @@
 if(!window.phonegap) window.phonegap = {};
 
 phonegap.PluginManager = (function(webworksPluginManager) {
+	/**
+	 * Private list of HTML 5 audio objects, indexed by the PhoneGap media object ids
+	 */
+	var audioObjects = {};
 	
 	this.PlayBookPluginManager = function() {
 		PhoneGap.onNativeReady.fire();
