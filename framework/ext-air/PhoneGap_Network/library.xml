@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <library isWhitelist="true">
 	<extension>
-		<entryClass>com.phonegap.Network</entryClass>
+		<entryClass>com.phonegap.network.Network</entryClass>
 	</extension>
 
 	<platforms>
