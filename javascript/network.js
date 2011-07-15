@@ -5,6 +5,7 @@
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010-2011, IBM Corporation
+ * Copyright (c) 2010-2011, Research In Motion Limited
  */
 
 /**
@@ -70,37 +71,38 @@ Connection = {
      * @constructor
      */
     var NetworkConnection = function() {
-        this.type = null;
-        this._firstRun = true;
+        var _firstRun = true;
+        
+        this.type = connection.UNKNOWN;
 
         var me = this;
-        this.getInfo(
-            function(info) {
-                me.type = info.type;
-                if (typeof info.event !== "undefined") {
-                    PhoneGap.fireEvent(info.event);
-                }
+        PhoneGap.exec(
+            function(type) {
+                me.type = type;
 
-                // should only fire this once
-                if (me._firstRun) {
-                    me._firstRun = false;
-                    PhoneGap.onPhoneGapConnectionReady.fire();
-                }
+                PhoneGap.onPhoneGapConnectionReady.fire();
             },
             function(e) {
                 console.log("Error initializing Network Connection: " + e);
-            });
-    };
+            },
+            "Network Status",
+            "getConnectionInfo"
+        );
 
-    /**
-     * Get connection info
-     *
-     * @param {Function} successCallback The function to call when the Connection data is available
-     * @param {Function} errorCallback The function to call when there is an error getting the Connection data. (OPTIONAL)
-     */
-    NetworkConnection.prototype.getInfo = function(successCallback, errorCallback) {
-        // Get info
-        PhoneGap.exec(successCallback, errorCallback, "Network Status", "getConnectionInfo", []);
+
+        PhoneGap.exec(
+            function(event) {
+                if (event) {
+                    me.type = event === "offline" ? connection.NONE : connection.WIFI;
+                    PhoneGap.fireEvent(event);
+                }
+            },
+            function(e) {
+                console.log("Error registering for online / offline event: " + e);
+            },
+            "Network Status", 
+            "registerNetworkChangeEvent"
+         );
     };
 
     /**
