@@ -59,17 +59,16 @@ phonegap.PluginManager = (function(webworksPluginManager) {
                     return { "status" : 1, "message" : Integer.toString(networkStatus) };
                     
                 case 'getConnectionInfo':
-                	var connection = Connection.NONE;
-                	var event = "offline";
-                	if (blackberry.system.hasDataCoverage()) {
-						connection = Connection.WIFI;
-						event = "online";
-					}
-					
+                	
 					//Register an event handler for the networkChange event
-					blackberry.events.registerEventHandler(networkChange, eventCallback, eventParams);
+					var callbackID = blackberry.events.registerEventHandler(networkChange, win, eventParams);
 					
-                    return { "status" : 1, "message" : {"type":connection, "event":event } };
+					//pass our callback id down to our network extension
+					var requestID = new blackberry.transport.RemoteFunctionCall("blackberry/network/networkStatusChanged");
+					request.addParam("networkStatusChangedID", callbackID);
+					request.makeAsyncCall(); //don't care about the return value
+					
+                    return { "status" : 0, "message" : "Your answer is on its way" };
                 
 				
 				default:
