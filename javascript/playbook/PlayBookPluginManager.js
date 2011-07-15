@@ -44,7 +44,26 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 	
 	networkAPI = {
 		execute: function(action, args, win, fail) {
-			var actionFound = false;
+			var actionFound = false,
+                event = "offline",
+                networkStatus,
+                connectionType,
+                callbackID,
+                requestID;
+
+            function handleNetworkChange(networkStatus) {
+                var response = {};
+
+                response.type = NetworkStatus.REACHABLE_VIA_WIFI_NETWORK;
+                response.event = networkStatus;
+
+                if (response.type === "offline") {
+                    response.type = NetworkStatus.NOT_REACHABLE;
+                }
+
+                win(resonse);
+            };
+
 			/**
 			 * For PlayBooks, we currently only have WiFi connections, so return WiFi if there is
 			 * any access at all.
@@ -52,28 +71,35 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 			 */
 			switch(action) {
 				case 'isReachable':
-					var networkStatus = NetworkStatus.NOT_REACHABLE;
-					if (blackberry.system.hasDataCoverage()) {
-						networkStatus = NetworkStatus.REACHABLE_VIA_WIFI_NETWORK;
-					}
-                    return { "status" : 1, "message" : Integer.toString(networkStatus) };
+                    networkStatus = NetworkStatus.NOT_REACHABLE;
+                    if (blackberry.system.hasDataCoverage()) {
+                        networkStatus = NetworkStatus.REACHABLE_VIA_WIFI_NETWORK;
+                        event = "online";
+                    }
                     
+                    return { "status" : 1, "message" : Integer.toString(networkStatus) };
+                
                 case 'getConnectionInfo':
                 	
 					//Register an event handler for the networkChange event
-					var callbackID = blackberry.events.registerEventHandler(networkChange, win, eventParams);
+					callbackID = blackberry.events.registerEventHandler("networkChange", handleNetworkChange, eventParams);
 					
 					//pass our callback id down to our network extension
-					var requestID = new blackberry.transport.RemoteFunctionCall("blackberry/network/networkStatusChanged");
+					requestID = new blackberry.transport.RemoteFunctionCall("blackberry/network/networkStatusChanged");
 					request.addParam("networkStatusChangedID", callbackID);
 					request.makeAsyncCall(); //don't care about the return value
 					
-                    return { "status" : 0, "message" : "Your answer is on its way" };
-                
+                    connectionType = connection.UNKNOWN;
+                    if (blackberry.system.hasDataCoverage()) {
+                        connectionType = connectionType.WIFI;
+                        event = "online";
+                    }
+                    
+                    return { "status" : 1, "message" : Integer.toString(connectionType) };
 				
 				default:
-					fail();						
-			}   
+					fail();
+			} 
 		}
 	};
 	
