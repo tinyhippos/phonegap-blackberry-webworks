@@ -158,16 +158,16 @@
                 <then>
                     <exec executable="${properties.bbwp.bin}">
                         <arg file="${build.dir}/${cod.name}.zip" />
-                        <arg value="/g" />
+                        <arg value="-g" />
                         <arg value="${properties.sigtool.password}" />
-                        <arg value="/o" />
+                        <arg value="-o" />
                         <arg file="${build.dir}" />
                     </exec>
                 </then>
                 <else>
                     <exec executable="${properties.bbwp.bin}">
                         <arg file="${build.dir}/${cod.name}.zip" />
-                        <arg value="/o" />
+                        <arg value="-o" />
                         <arg file="${build.dir}" />
                     </exec>
                 </else>

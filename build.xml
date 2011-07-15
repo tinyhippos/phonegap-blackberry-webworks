@@ -20,6 +20,12 @@
     <property name="jar.basename" value="phonegap.${version}.jar" />
     <property name="jar.file"     value="${jar.path}/${jar.basename}" />
     
+    <property name="playbook.js.src"    location="javascript/playbook" />
+    <property name="playbook.js.path"   value="javascript/playbook" />
+    <property name="playbook.js.file"   value="${playbook.js.path}/playbook.js" />
+    <property name="playbook.ext.src"   location="framework/ext-air" />
+    <property name="playbook.ext.path"  value="ext-air" />
+    
     <property name="js.src"          location="javascript" />
     <property name="js.path"         value="javascript" />
     <property name="js.basename"     value="phonegap.${version}.js" />
@@ -45,9 +51,9 @@
                      output-file="${build.dir}/${js.file-min}" />
     </target>
     
-    <!-- BUILD WIDGET EXTENSION -->
+    <!-- BUILD BLACKBERRY EXTENSION -->
     
-    <target name="build-extension">
+    <target name="build-bb-extension">
         <mkdir dir="${build.dir}/${jar.path}" />
         
         <zip destfile="${build.dir}/${jar.file}">
@@ -56,8 +62,27 @@
         </zip>
     </target>
     
+    <!-- BUILD PLAYBOOK EXTENSION -->
+    
+    <target name="build-pb-extension">       
+        
+        <!-- Javascript -->
+        <mkdir dir="${build.dir}/${playbook.js.path}" /> 
+        <concat destfile="${build.dir}/${playbook.js.file}" append="false">
+            <fileset dir="${playbook.js.src}">
+                <include name="*.js" />
+            </fileset>
+        </concat>
+
+        <!-- Copy Ext -->
+        <mkdir dir="${build.dir}/${playbook.ext.path}" />
+        <copy todir="${build.dir}/${playbook.ext.path}">
+            <fileset dir="${playbook.ext.src}" />
+        </copy>
+    </target>
+    
     <!-- CREATE A PROJECT -->
-    <target name="create" depends="clean, build-javascript, build-extension">
+    <target name="create" depends="clean, build-javascript, build-bb-extension, build-pb-extension">
         <fail unless="project.path" message="You must give a project PATH. Use the argument -Dproject.path=&#34;C:\dev\my_project&#34;" />
         
         <available file="${project.path}" property="project.exists" />
@@ -106,7 +131,7 @@ Getting Started:
     
     <!-- UPDATE A PROJECT -->
     
-    <target name="update" depends="clean, build-javascript, build-extension">
+    <target name="update" depends="clean, build-javascript, build-bb-extension, build-pb-extension">
         <fail unless="project.path" message="You must give a project PATH. Use the argument -Dproject.path=&#34;C:\dev\my_project&#34;" />
         
         <available file="${project.path}" property="project.exists" />
