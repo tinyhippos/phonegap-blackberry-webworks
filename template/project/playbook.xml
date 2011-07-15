@@ -23,9 +23,9 @@
             <arg value="-installApp" />
             <arg value="-launchApp" />
             <arg value="-device" />
-            <arg value="${properties.device.sim.ip}" />
+            <arg value="${properties.playbook.device.ip}" />
             <arg value="-password" />
-            <arg value="${properties.device.sim.pw}" />
+            <arg value="${properties.playbook.device.password}" />
             <arg file="${build.dir}/${cod.name}.bar" />
         </exec>
     </target>
@@ -136,17 +136,12 @@
             </fileset>
         </copy>
         
-        <!-- Append the playbook java to the phonegap file -->
-        <fileset dir="${widget.dir}" id="phonegapjs">
-            <include name="phonegap*.js"/>
-            <exclude name="phonegap*.min.js"/>
-        </fileset>      
-        <property name="js.file" refid="phonegapjs"/>
-        <concat destfile="${widget.dir}/${js.file}" append="true">
+        <!-- Overwrite the phonegap js with the playbook specific phonegap js -->
+        <copy todir="${widget.dir}" overwrite="true">
             <fileset dir="www/playbook">
                 <include name="*.js" />
             </fileset>
-        </concat>
+        </copy>
         
         <!-- Update WebWorks Packager with the AIR APIs -->
         <copy todir="${properties.playbook.bbwp.dir}\ext" overwrite="true">

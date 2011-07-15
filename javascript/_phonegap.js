@@ -353,7 +353,7 @@ var PhoneGap = PhoneGap || (function() {
             try {
                 func();
             } catch(e) {
-                if (typeof(debug['log']) == 'function') {
+                if (typeof(debug) != 'undefined' && typeof(debug['log']) == 'function') {
                     debug.log("Failed to run constructor: " + debug.processMessage(e));
                 } else {
                     alert("Failed to run constructor: " + e.message);

@@ -67,12 +67,16 @@
     <target name="build-pb-extension">       
         
         <!-- Javascript -->
-        <mkdir dir="${build.dir}/${playbook.js.path}" /> 
-        <concat destfile="${build.dir}/${playbook.js.file}" append="false">
-            <fileset dir="${playbook.js.src}">
-                <include name="*.js" />
-            </fileset>
+        <mkdir dir="${build.dir}/${playbook.js.path}" />
+        <concat destfile="${build.dir}/${playbook.js.path}/${js.basename}" append="false">
+            <fileset dir="${js.src}" includes="*.js"/>
         </concat>
+        <concat destfile="${build.dir}/${playbook.js.path}/${js.basename}" append="true">
+            <fileset dir="${js.src}/playbook" includes="*.js"/>
+        </concat>
+        <!-- compressed -->
+        <compress-js input-file="${build.dir}/${playbook.js.path}/${js.basename}"
+                     output-file="${build.dir}/${playbook.js.path}/${js.basename-min}" />
 
         <!-- Copy Ext -->
         <mkdir dir="${build.dir}/${playbook.ext.path}" />
