@@ -326,15 +326,17 @@ var PhoneGap = PhoneGap || (function() {
      * Trap BlackBerry WebWorks exit. Fire onPause event, and give PhoneGap
      * extension chance to clean up before exiting.
      */
-    blackberry.app.event.onExit(function() {
-        PhoneGap.onPause.fire();
+     if(blackberry.app.event.onExit) {
+        blackberry.app.event.onExit(function() {
+            PhoneGap.onPause.fire();
 
-        // allow PhoneGap JavaScript Extension opportunity to cleanup
-        phonegap.PluginManager.destroy();
-        
-        // exit the app
-        blackberry.app.exit();
-    });
+            // allow PhoneGap JavaScript Extension opportunity to cleanup
+            phonegap.PluginManager.destroy();
+            
+            // exit the app
+            blackberry.app.exit();
+        });
+    }
     
     //--------
     // Plugins
@@ -487,8 +489,9 @@ var PhoneGap = PhoneGap || (function() {
 				}
 				return v.message;
             }else if (v.status == PhoneGap.callbackStatus.NO_RESULT){
-			// If error, then display error
+			
 			}else {
+                // If error, then display error
 				console.log("Error: Status="+v.status+" Message="+v.message);
 
 				// If there is a fail callback, then call it now with returned value
