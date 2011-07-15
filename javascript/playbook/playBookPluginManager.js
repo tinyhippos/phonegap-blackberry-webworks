@@ -99,7 +99,7 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 					}
 					catch (e) {
                         console.log('Error seeking audio: ' + e);
-                        return {"status" : 3, "message" : "Error seeking audio: " + e);
+                        return {"status" : 3, "message" : "Error seeking audio: " + e};
                     }
                     
 					result = {"status" : 1, "message" : "Seek to audio succeeded" };
@@ -118,14 +118,14 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 						return {"status" : 2, "message" : "Audio Object has not been initialized"};
 					}
 					
-					result = {"status" : 1, audio.currentTime };
+					result = {"status" : 1, "message" : audio.currentTime };
 					
 				case 'getDuration':
 					if (!audio) {
 						return {"status" : 2, "message" : "Audio Object has not been initialized"};
 					}
 					
-					result = {"status" : 1, audio.duration };
+					result = {"status" : 1, "message" : audio.duration };
 					
 				case 'startRecordingAudio':
 				
