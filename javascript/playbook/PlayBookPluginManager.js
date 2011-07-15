@@ -34,9 +34,14 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 		}
 	};
 	
+	mediaAPI = {
+		
+	};
+	
     var plugins = {
 		'Camera' : cameraAPI,
-		'Device' : deviceAPI
+		'Device' : deviceAPI,
+		'Media' : mediaAPI
 	};
 	
 	//Instantiate it
