@@ -9,6 +9,12 @@
 if(!window.phonegap) window.phonegap = {};
 
 phonegap.PluginManager = (function(webworksPluginManager) {
+
+	/**
+	 * Private list of HTML 5 audio objects, indexed by the PhoneGap media object ids
+	 */
+	var audioObjects = {};
+	
 	
 	this.PlayBookPluginManager = function() {
 		PhoneGap.onNativeReady.fire();
@@ -37,7 +43,7 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 					return {"status" : 1, 
 							"message" : webWorksResult};
 				default:
-					fail();						
+					return {"status" : 7, "message" : "Invalid action" + action};
 			}   
 		}
 	};
@@ -82,15 +88,114 @@ phonegap.PluginManager = (function(webworksPluginManager) {
                     return { "status" : 0, "message": "event registered" };
 
 				default:
-					fail();
+					return {"status" : 7, "message" : "Invalid action" + action};
 			} 
+		}
+	};
+	
+	
+	mediaAPI = {
+		execute: function(action, args, win, fail) {
+			if (!args.length) {
+				return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+			}
+				
+			var id = args[0],
+				audio = audioObjects[id],
+				result;
+			
+			switch (action) {
+				case 'startPlayingAudio':
+					if( args.length == 1 ) {
+						return {"status" : 9, "message" : "Media source argument not found"};
+					}
+					
+					if ( audio ) {
+						audio.pause();
+						audioObjects[id] = undefined;
+					}
+					
+					audio = audioObjects[id] = new Audio(args[1]);
+					audio.play();
+					
+					result = {"status" : 1, "message" : "Audio play started" };
+				
+				case 'stopPlayingAudio':
+					if (!audio) {
+						return {"status" : 2, "message" : "Audio Object has not been initialized"};
+					}
+					
+					audio.pause();
+					audioObjects[id] = undefined;
+					
+					result = {"status" : 1, "message" : "Audio play stopped" };
+					
+				case 'seekToAudio':
+					if (!audio) {
+						return {"status" : 2, "message" : "Audio Object has not been initialized"};
+					}
+					if( args.length == 1 ) {
+						return {"status" : 9, "message" : "Media seek time argument not found"};
+					}
+				
+					try {
+						audio.currentTime = args[1];
+					}
+					catch (e) {
+                        console.log('Error seeking audio: ' + e);
+                        return {"status" : 3, "message" : "Error seeking audio: " + e);
+                    }
+                    
+					result = {"status" : 1, "message" : "Seek to audio succeeded" };
+					
+				case 'pausePlayingAudio':
+					if (!audio) {
+						return {"status" : 2, "message" : "Audio Object has not been initialized"};
+					}
+				
+					audio.pause();
+					
+					result = {"status" : 1, "message" : "Audio paused" };
+					
+				case 'getCurrentPositionAudio':
+					if (!audio) {
+						return {"status" : 2, "message" : "Audio Object has not been initialized"};
+					}
+					
+					result = {"status" : 1, audio.currentTime };
+					
+				case 'getDuration':
+					if (!audio) {
+						return {"status" : 2, "message" : "Audio Object has not been initialized"};
+					}
+					
+					result = {"status" : 1, audio.duration };
+					
+				case 'startRecordingAudio':
+				
+				case 'stopRecordingAudio':
+				
+				case 'release':
+					if (audio) {
+						audioObjects[id] = undefined;
+						delete audio;
+					}
+					
+					result = {"status" : 1, "message" : "Media resources released"};
+				
+				default:
+					return {"status" : 7, "message" : "Invalid action" + action};
+			}
+			
+			return result;
 		}
 	};
 	
     var plugins = {
 		'Camera' : cameraAPI,
 		'Device' : deviceAPI,
-		'Network Status' : networkAPI
+		'Network Status' : networkAPI,
+		'Media' : mediaAPI
 	};
 	
 	//Instantiate it
