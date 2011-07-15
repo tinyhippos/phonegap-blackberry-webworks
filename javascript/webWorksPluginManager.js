@@ -48,12 +48,19 @@
     
     var notificationAPI = {
         execute: function(action, args, win, fail) {
+            //Unpack and map the args
+            var msg = args[0];
+            var title = args[1];
+            
+            
 			switch(action) {
-                case 'alert':						
-                    blackberry.ui.dialog.customAskAsync.apply(window,args);
+                case 'alert':
+                    var btnLabel = args[2];
+                    blackberry.ui.dialog.customAskAsync.apply(this, [ msg, [ btnLabel ], win, { "title" : title } ]);
                     break;
-                case 'confirm':						
-                    blackberry.ui.dialog.customAskAsync.apply(window,args);
+                case 'confirm':	
+                    var btnLabels = args[2].split(",");
+                    blackberry.ui.dialog.customAskAsync.apply(this, [msg, btnLabels, win, {"title" : title} ]);
                     break;
 				default:
 					return retInvalidAction;
