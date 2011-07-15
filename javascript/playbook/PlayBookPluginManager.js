@@ -13,8 +13,6 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 	
 	this.PlayBookPluginManager = function() {
 		PhoneGap.onNativeReady.fire();
-        //H@x Attack!! this should be done in Network
-        PhoneGap.onPhoneGapConnectionReady.fire();
 	};
 	
 	PlayBookPluginManager.prototype.exec = function(win, fail, clazz, action, args) {
