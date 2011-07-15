@@ -36,17 +36,30 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 	var deviceAPI = {
 		execute: function(webWorksResult, action, args, win, fail) {
 			if(action === 'getDeviceInfo') {
-                    //Augment WW result and return it
-					webWorksResult.platform = "PlayBook";
-					return {"status" : PhoneGap.callbackStatus.OK, 
-							"message" : webWorksResult};
+                //Augment WW result and return it
+                webWorksResult.platform = "PlayBook";
+                return {"status" : PhoneGap.callbackStatus.OK, 
+                        "message" : webWorksResult};
 			}  
             
             return retInvalidAction;					
 		}
 	};
     
-    networkAPI = {
+    var loggerAPI = {
+        execute: function(webWorksResult, action, args, win, fail) {
+            if(action === 'log') {
+                console.log(args);
+                
+                return {"status" : PhoneGap.callbackStatus.OK, 
+                        "message" : 'Message logged to console: ' + msg};
+            }
+            
+            return retInvalidAction;
+        }
+    };
+    
+    var networkAPI = {
 		execute: function(action, args, win, fail) {
 			var actionFound = false,
                 networkStatus = NetworkStatus.NOT_REACHABLE,
@@ -93,6 +106,7 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 	
     var plugins = {
         'Device' : deviceAPI,
+        'Logger' : loggerAPI,
         'Network Status' : networkAPI
 	};
 	
