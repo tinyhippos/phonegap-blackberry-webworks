@@ -1,4 +1,3 @@
-
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
@@ -36,8 +35,7 @@
     Notification.prototype.alert = function(message, completeCallback, title, buttonLabel) {
         var _title = (title || "Alert");
         var _buttonLabel = (buttonLabel || "OK");
-        //customAskAsync(message : String, buttons : String[], [onOptionSelected: function], [settings: Object])
-        PhoneGap.exec(completeCallback, null, 'Notification', 'alert', [message, [_buttonLabel], completeCallback, {"title" : _title} ]);
+        PhoneGap.exec(completeCallback, null, 'Notification', 'alert', [message, _title, _buttonLabel]);
     };
 
     /**
@@ -50,8 +48,7 @@
     Notification.prototype.confirm = function(message, resultCallback, title, buttonLabels) {
         var _title = (title || "Confirm");
         var _buttonLabels = (buttonLabels || "OK,Cancel");
-         //customAskAsync(message : String, buttons : String[], [onOptionSelected: function], [settings: Object])
-        return PhoneGap.exec(resultCallback, null, 'Notification', 'confirm',[message, [_buttonLabel], completeCallback, {"title" : _title} ]);
+        return PhoneGap.exec(resultCallback, null, 'Notification', 'confirm', [message, _title, _buttonLabels]);
     };
     
     /**
