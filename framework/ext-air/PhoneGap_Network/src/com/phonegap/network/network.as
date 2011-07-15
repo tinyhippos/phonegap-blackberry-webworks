@@ -1,4 +1,3 @@
-
 package blackberry.system.event {
     import flash.net.NetworkInfo;
     
