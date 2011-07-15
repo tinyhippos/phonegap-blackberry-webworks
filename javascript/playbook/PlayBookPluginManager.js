@@ -9,34 +9,33 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 	};
 	
 	PlayBookPluginManager.prototype.exec = function(win, fail, clazz, action, args) {
-		if(plugins[clazz]){
-            return plugins[clazz].execute(action, args, win, fail);
-		}else{
-			return webworksPluginManager.exec(win, fail, clazz, action, args);
+		var wwResult = webworksPluginManager.exec(win, fail, clazz, action, args);
+        
+        //We got a sync result from WW that we can pass on to get a native mixin
+        //For async calls there's nothing to do
+        if(wwResult.status == PhoneGap.callbackStatus.OK && plugins[clazz]){
+            return plugins[clazz].execute(wwResult.message, action, args, win, fail);
 		}
+        
+        return wwResult;
 	};
     
-    PlayBookPluginManager.prototype.resume = function(){};
-    PlayBookPluginManager.prototype.pause = function(){};
-    PlayBookPluginManager.prototype.destroy = function(){};
+    PlayBookPluginManager.prototype.resume = webworksPluginManager.resume;
+    PlayBookPluginManager.prototype.pause = webworksPluginManager.pause;
+    PlayBookPluginManager.prototype.destroy = webworksPluginManager.destroy;
 	
-	PlayBookPluginManager.prototype.callback = function(success, win, fail) {
-		if (!success) 
-			fail();    
-    };
+	var retInvalidAction = { "status" : 7, "message" : "Action not found" };
 
 	var deviceAPI = {
-		execute: function(action, args, win, fail) {
-			var actionFound = false;
-			switch(action) {
-				case 'getDeviceInfo':
-                    var webWorksResult = webworksPluginManager.exec(win, fail, 'Device', action, args).message;
+		execute: function(webworksResult, action, args, win, fail) {
+			if(action === 'getDeviceInfo') {
+                    //Augment WW result and return it
 					webWorksResult.platform = "PlayBook";
 					return {"status" : 1, 
 							"message" : webWorksResult};
-				default:
-					fail();						
 			}  
+            
+            return retInvalidAction;					
 		}
 	};
 	

@@ -6,27 +6,29 @@
 	PluginManager.prototype.exec = function(win, fail, clazz, action, args) {
 		if(plugins[clazz]){
 			return plugins[clazz].execute(action, args, win, fail);
-		}else{
-			return {"status" : 2, "message" : "Class " + clazz+ " cannot be found"};
 		}
+        
+        return {"status" : 2, "message" : "Class " + clazz+ " cannot be found"};
 	};
     
     PluginManager.prototype.resume = function(){};
     PluginManager.prototype.pause = function(){};
     PluginManager.prototype.destroy = function(){};
     
-    var returnObjAsyncCall = { "status" : 0, "message" : "WebWorks Is On It" };
-    var returnObjInvalidAction = { "status" : 7, "message" : "Action not found" };
+    var retAsyncCall = { "status" : 0, "message" : "WebWorks Is On It" };
+    var retInvalidAction = { "status" : 7, "message" : "Action not found" };
     
     var cameraAPI = {
 		execute: function(action, args, win, fail) {
 			switch(action) {
 				case 'takePicture':
 					blackberry.media.camera.takePicture(win, fail, fail);
-					return returnObjAsyncCall;
+					break;
 				default:
-					fail();
-			}      
+					return retInvalidAction;
+			}
+
+            return retAsyncCall;            
 		}
     };
 
@@ -38,9 +40,9 @@
 														"name" : blackberry.system.model,
 														"uuid" : blackberry.identity.PIN,
 														"phonegap" : "1.0.0rc1"}};
-				default:
-					return returnObjInvalidAction;
-			}   
+			} 
+            
+            return retInvalidAction;
 		}
     };
     
@@ -54,10 +56,10 @@
                     blackberry.ui.dialog.customAskAsync.apply(window,args);
                     break;
 				default:
-					return returnObjInvalidAction;
+					return retInvalidAction;
 			}  
             
-            return returnObjAsyncCall;
+            return retAsyncCall;
 		}
     };
 

@@ -489,8 +489,9 @@ var PhoneGap = PhoneGap || (function() {
 				}
 				return v.message;
             }else if (v.status == PhoneGap.callbackStatus.NO_RESULT){
-			// If error, then display error
+			
 			}else {
+                // If error, then display error
 				console.log("Error: Status="+v.status+" Message="+v.message);
 
 				// If there is a fail callback, then call it now with returned value
