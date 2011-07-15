@@ -1,5 +1,3 @@
-f (!PhoneGap.hasResource("media")) {
-PhoneGap.addResource("media");
 
 /**
  * This class provides access to the device media, interfaces to both sound and video
