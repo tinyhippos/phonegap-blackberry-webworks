@@ -1,5 +1,4 @@
-
-package blackberry.system.event {
+package com.phonegap.network {
     import flash.net.NetworkInfo;
     
     import webworks.extension.DefaultExtension;
@@ -29,3 +28,4 @@ package blackberry.system.event {
         }
     }
 }
+
