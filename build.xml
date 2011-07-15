@@ -110,6 +110,11 @@
             <fileset dir="${build.dir}/${jar.path}" />
         </copy>
         
+        <!-- copy ext-air/ -->
+        <copy todir="${project.path}/www/ext-air">
+            <fileset dir="${build.dir}/${playbook.ext.path}" />
+        </copy>
+        
         <!-- save release -->
         <mkdir dir="${project.path}/${update.dir}" />
         <copy todir="${project.path}/${update.dir}">
