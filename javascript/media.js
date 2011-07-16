@@ -1,5 +1,13 @@
-f (!PhoneGap.hasResource("media")) {
-PhoneGap.addResource("media");
+
+/*
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * 
+ * Copyright (c) 2005-2010, Nitobi Software Inc.
+ * Copyright (c) 2010-2011, IBM Corporation
+ * Copyright (c) 2010-2011, Research In Motion Limited
+ */
+
 
 /**
  * This class provides access to the device media, interfaces to both sound and video
@@ -200,4 +208,4 @@ PhoneGap.Media.onStatus = function(id, msg, value) {
         }
     }
 };
-}
+
