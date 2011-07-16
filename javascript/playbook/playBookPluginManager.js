@@ -103,7 +103,7 @@ phonegap.PluginManager = (function(webworksPluginManager) {
                     return { "status" : 0, "message": "event registered" };
 
 				default:
-					fail();
+					return {"status" : 7, "message" : "Invalid action" + action};
 			} 
 		}
 	};
