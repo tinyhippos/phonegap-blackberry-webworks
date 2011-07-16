@@ -261,11 +261,17 @@ function CaptureAudioOptions() {
             }
         }
         
-        PhoneGap.exec(function(mediaFiles) {
-            successCallback(getMediaFiles(mediaFiles));
-        }, function(error) {
-            Capture.onError(error, errorCallback);
-        }, 'MediaCapture', 'captureImage', [limit, mode]);         
+        PhoneGap.exec(
+            function(mediaFiles) {
+                successCallback(getMediaFiles(mediaFiles));
+            }, 
+            function(error) {
+                Capture.onError(error, errorCallback);
+            }, 
+            'MediaCapture', 
+            'captureImage', 
+            [limit, mode]
+        );         
     };
     
     /**
