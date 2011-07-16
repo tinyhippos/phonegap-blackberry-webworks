@@ -1,4 +1,3 @@
-
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
@@ -8,18 +7,12 @@
  * Copyright (c) 2010-2011, Research In Motion Limited
  */
 
-/**
- * phonegap.Logger is a Blackberry WebWorks extension that will log to the 
- * BB Event Log and System.out.  Comment this line to disable.
- */ 
-phonegap.Logger.enable();
-
 (function(){
-    if(typeof(phonegap.Logger) !== 'undefined') {
-        return;
-    }
-    
     function Logger() {
+        if(typeof(phonegap.Logger) !== 'undefined') {
+            return;
+        }
+        
         /**
          * If Blackberry doesn't define a console object, we create our own.
          * console.log will use phonegap.Logger to log to BB Event Log and System.out.
@@ -32,8 +25,12 @@ phonegap.Logger.enable();
         };
     }
     
-    Logger.prototype.log(msg) {
+    Logger.prototype.log = function(msg) {
         PhoneGap.exec(null, null, 'Logger', 'log', msg);
+    };
+    
+    Logger.prototype.enable = function() {
+        PhoneGap.exec(null, null, 'Logger', 'enable', msg);
     }
     
     /**
@@ -41,5 +38,6 @@ phonegap.Logger.enable();
      */
     PhoneGap.addConstructor(function() {
         phonegap.Logger = new Logger();
+        phonegap.Logger.enable();
     });
 }());
