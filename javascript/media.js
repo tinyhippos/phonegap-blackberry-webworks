@@ -208,4 +208,4 @@ PhoneGap.Media.onStatus = function(id, msg, value) {
         }
     }
 };
-}
+

@@ -214,6 +214,8 @@ phonegap.PluginManager = (function(webworksPluginManager) {
         'Logger' : loggerAPI,
 		'Media' : mediaAPI,
         'Network Status' : networkAPI
+		'Device' : deviceAPI,
+		'Media' : mediaAPI
 	};
 	
 	//Instantiate it
