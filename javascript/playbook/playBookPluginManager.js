@@ -58,6 +58,7 @@ phonegap.PluginManager = (function(webworksPluginManager) {
                 case 'enable':
                     return {"status" : PhoneGap.callbackStatus.OK, 
                             "message" : 'Nothing to enable on PlayBook'};
+	    }
             
             return retInvalidAction;
         }
