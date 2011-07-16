@@ -48,12 +48,16 @@ phonegap.PluginManager = (function(webworksPluginManager) {
     
     var loggerAPI = {
         execute: function(webWorksResult, action, args, win, fail) {
-            if(action === 'log') {
-                console.log(args);
+            switch(action) {
+                case 'log': 
+                    console.log(args);
+                    
+                    return {"status" : PhoneGap.callbackStatus.OK, 
+                            "message" : 'Message logged to console: ' + msg};
                 
-                return {"status" : PhoneGap.callbackStatus.OK, 
-                        "message" : 'Message logged to console: ' + msg};
-            }
+                case 'enable':
+                    return {"status" : PhoneGap.callbackStatus.OK, 
+                            "message" : 'Nothing to enable on PlayBook'};
             
             return retInvalidAction;
         }
