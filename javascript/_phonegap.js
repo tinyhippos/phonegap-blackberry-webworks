@@ -609,3 +609,4 @@ var PhoneGap = PhoneGap || (function() {
 // to signify that the native code is ready. It is a global since 
 // it may be called before any PhoneGap JS is ready.
 if (typeof _nativeReady !== 'undefined') { PhoneGap.onNativeReady.fire(); }
+
