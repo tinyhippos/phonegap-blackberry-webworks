@@ -128,6 +128,11 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 					result = {"status" : 1, "message" : audio.duration };
 					
 				case 'startRecordingAudio':
+                    if( args.length <= 1 ) {
+						return {"status" : 9, "message" : "Media start recording, insufficient arguments"};
+					}
+                    
+                    blackberry.media.microphone.record(args[1], successCallback, errorCallback);
 				
 				case 'stopRecordingAudio':
 				
