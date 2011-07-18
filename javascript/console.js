@@ -30,7 +30,7 @@
     };
     
     Logger.prototype.enable = function() {
-        PhoneGap.exec(null, null, 'Logger', 'enable', msg);
+        PhoneGap.exec(null, null, 'Logger', 'enable', {});
     }
     
     /**
