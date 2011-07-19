@@ -18,11 +18,12 @@
          * console.log will use phonegap.Logger to log to BB Event Log and System.out.
          */
         if (typeof console == "undefined") {    
-            console = {};
+            console = { log : 
+				function(msg) {
+					phonegap.Logger.log(''+msg);
+				}; 
+			};
         }
-        console.log = function(msg) {
-            phonegap.Logger.log(''+msg);
-        };
     }
     
     Logger.prototype.log = function(msg) {
