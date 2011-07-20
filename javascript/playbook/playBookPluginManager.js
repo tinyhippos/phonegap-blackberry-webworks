@@ -69,12 +69,11 @@ phonegap.PluginManager = (function(webworksPluginManager) {
     };
     
     var networkAPI = {
-		execute: function(action, args, win, fail) {
-			var actionFound = false,
-                networkStatus = NetworkStatus.NOT_REACHABLE,
-                connectionType = connection.NONE,
+		execute: function(webWorksResult, action, args, win, fail) {
+			var connectionType = Connection.NONE,
+				eventType = "offline",
                 callbackID,
-                requestID;
+                request;
 
 			/**
 			 * For PlayBooks, we currently only have WiFi connections, so return WiFi if there is
@@ -82,33 +81,24 @@ phonegap.PluginManager = (function(webworksPluginManager) {
 			 * TODO: update if/when PlayBook gets other connection types...
 			 */
 			switch(action) {
-				case 'isReachable':
-                    if (blackberry.system.hasDataCoverage()) {
-                        networkStatus = NetworkStatus.REACHABLE_VIA_WIFI_NETWORK;
-                    }
-                    
-                    return { "status" : 1, "message" : networkStatus };
-                
                 case 'getConnectionInfo':
                     if (blackberry.system.hasDataCoverage()) {
-                        connectionType = connectionType.WIFI;
+                        connectionType = Connection.WIFI;
+						eventType = "online";
                     }
-                    
-                    return { "status" : 1, "message" : connectionType };
-                
-                case "registerNetworkChangeEvent":
+					
 					//Register an event handler for the networkChange event
-					callbackID = blackberry.events.registerEventHandler("networkChange", win, eventParams);
+					callbackID = blackberry.events.registerEventHandler("networkChange", win);
 
 					//pass our callback id down to our network extension
-					requestID = new blackberry.transport.RemoteFunctionCall("blackberry/network/networkStatusChanged");
+					request = new blackberry.transport.RemoteFunctionCall("com/phonegap/getConnectionInfo");
 					request.addParam("networkStatusChangedID", callbackID);
-					request.makeAsyncCall(); //don't care about the return value
-
-                    return { "status" : 0, "message": "event registered" };
+					request.makeSyncCall();
+                    
+                    return { "status" : PhoneGap.callbackStatus.OK, "message" : {"type" : connectionType, "event" : eventType } };
 
 				default:
-					return {"status" : 7, "message" : "Invalid action" + action};
+					return { "status" : PhoneGap.callbackStatus.INVALID_ACTION, "message" : "Invalid action " + action};
 			} 
 		}
 	};
