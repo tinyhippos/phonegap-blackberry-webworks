@@ -21,7 +21,7 @@
             console = { log : 
 				function(msg) {
 					phonegap.Logger.log(''+msg);
-				}; 
+				} 
 			};
         }
     }

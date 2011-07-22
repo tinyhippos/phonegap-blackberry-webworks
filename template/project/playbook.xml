@@ -15,7 +15,7 @@
     <!-- LOAD DEVICE -->
     
     <target name="load-device" depends="package-app">
-        <bbwp code-sign="false" />
+        <bbwp code-sign="true" />
 
         <exec executable="cmd" dir="." failonerror="true">
             <arg value="/c"/>
@@ -26,6 +26,7 @@
             <arg value="${properties.playbook.device.ip}" />
             <arg value="-password" />
             <arg value="${properties.playbook.device.password}" />
+			<arg value="-package" />
             <arg file="${build.dir}/${cod.name}.bar" />
         </exec>
     </target>
@@ -34,93 +35,21 @@
     
     <target name="load-simulator" depends="build">
 
-        <!-- Locate BBWP simulator directory. There may be multiple, so choose the first. -->
-        <path id="bbwp.sim.path">
-            <first>
-                <fileset dir="${properties.playbook.bbwp.dir}/simpack">
-                    <include name="**/handhelds.manifest.txt" />
-                </fileset>
-            </first>
-        </path>
-        <dirname property="bbwp.sim.dir" file="${toString:bbwp.sim.path}" />
-
-        <!-- Simulator directory: Use sim.dir property if set in project.properties file. 
-             Otherwise, use bbwp simulator directory. -->
-        <condition 
-            property="simulator.dir" 
-            value="${properties.blackberry.sim.dir}" 
-            else="${bbwp.sim.dir}">
-                <available file="${properties.blackberry.sim.dir}" type="dir" />
-        </condition>
-        <echo message="Simulator directory=${simulator.dir}" />
-
-        <!-- Simulator binary: Use sim.bin property if set in project.properties file  
-             or try setting to 'defaultSimulator.bat' in simulator directory. -->
-        <condition 
-            property="sim.bin" 
-            value="${properties.blackberry.sim.bin}" 
-            else="defaultSimulator.bat">
-                <available file="${simulator.dir}/${properties.blackberry.sim.bin}"/>
-        </condition>
-
-        <!-- If simulator executable does not exist, use the first device listed 
-             in the 'handhelds.manifest.txt' file in the simulator directory. -->
-        <loadfile 
-            property="device.list"
-            srcFile="${simulator.dir}/handhelds.manifest.txt">
-            <filterchain>
-                <tokenFilter>
-                    <stringtokenizer/>
-                </tokenFilter>
-            </filterchain>
-        </loadfile>
-
-        <propertyregex property="device"
-            input="${device.list}"
-            regexp="^\d{4}"
-            select="\0"
-            override="true" />
-        <property name="device.bin" value="${device}.bat" />
-
-        <condition
-            property="simulator.bin" 
-            value="${sim.bin}"
-            else="${device.bin}">
-                <available file="${simulator.dir}/${sim.bin}" />
-        </condition>
-        
-        <echo message="Simulator executable=${simulator.dir}/${simulator.bin}" />
-
-        <!-- Close running simulators -->
-        <echo message="Closing all running simulators..." />
-        <exec executable="${simulator.dir}/fledgecontroller.exe" dir="${simulator.dir}" spawn="false">
-            <arg value="/execute=kill" />
+		<echo>This tool will not open the simulator for you </echo>
+		
+		<exec executable="cmd" dir="." failonerror="true">
+            <arg value="/c"/>
+            <arg value="${properties.playbook.bbwp.dir}\blackberry-tablet-sdk\bin\blackberry-deploy.bat"/>
+            <arg value="-installApp" />
+            <arg value="-launchApp" />
+            <arg value="-device" />
+            <arg value="${properties.playbook.sim.ip}" />
+            <arg value="-password" />
+            <arg value="${properties.playbook.sim.password}" />
+			<arg value="-package" />
+            <arg file="${build.dir}/${cod.name}.bar" />
         </exec>
-
-        <!-- MDS directory: Use mds.dir property if set in project.properties file. 
-             Otherwise, use bbwp MDS directory. -->
-        <condition 
-            property="mds.dir" 
-            value="${properties.blackberry.mds.dir}" 
-            else="${properties.playbook.bbwp.dir}/mds">
-                <available file="${properties.blackberry.mds.dir}" type="dir" />
-        </condition>
-        <echo message="MDS directory=${mds.dir}" />
         
-        <copy todir="${simulator.dir}">
-            <fileset dir="${build.dir}/StandardInstall" includes="*.cod, *.cso, *.csl, *.alx" />
-        </copy>
-        <exec executable="${mds.dir}/run.bat" dir="${mds.dir}" spawn="true" />
-        <exec executable="${simulator.dir}/${simulator.bin}" dir="${simulator.dir}" spawn="true" />
-
-        <!-- Only invoke FledgeHook.exe if it is found. Newer versions of the
-             WebWorks SDK do not include it. -->
-        <if>
-            <available file="${properties.playbook.bbwp.dir}/FledgeHook.exe" />
-            <then>
-                <exec executable="${properties.playbook.bbwp.dir}/FledgeHook.exe" dir="${properties.playbook.bbwp.dir}" spawn="true" />
-            </then>
-        </if>
     </target>
     
     <!-- PACKAGE-APP -->
@@ -175,8 +104,10 @@
                 <then>
                     <exec executable="${properties.playbook.bbwp.bin}">
                         <arg file="${build.dir}/${cod.name}.zip" />
-                        <arg value="-g" />
-                        <arg value="${properties.blackberry.sigtool.password}" />
+                        <arg value="-gcsk" />
+                        <arg value="${properties.playbook.sigtool.csk.password}" />
+						<arg value="-gp12" />
+                        <arg value="${properties.playbook.sigtool.p12.password}" />
                         <arg value="-o" />
                         <arg file="${build.dir}" />
                     </exec>
@@ -186,7 +117,6 @@
                         <arg file="${build.dir}/${cod.name}.zip" />
                         <arg value="-o" />
                         <arg file="${build.dir}" />
-                        <arg value="-d" />
                     </exec>
                 </else>
             </if>
@@ -203,22 +133,33 @@
     <!-- CLEAN DEVICE -->
     
     <target name="clean-device" depends="generate-cod-name">
-        <exec executable="${properties.playbook.bbwp.dir}/bin/JavaLoader.exe">
-            <arg value="-usb" />
-            <arg value="erase" />
-            <arg value="-f" />
-            <arg value="${cod.name}.cod" />
+        <exec executable="cmd" dir="." failonerror="true">
+            <arg value="/c"/>
+            <arg value="${properties.playbook.bbwp.dir}\blackberry-tablet-sdk\bin\blackberry-deploy.bat"/>
+            <arg value="-uninstallApp" />
+            <arg value="-device" />
+            <arg value="${properties.playbook.device.ip}" />
+            <arg value="-password" />
+            <arg value="${properties.playbook.device.password}" />
+			<arg value="-package" />
+            <arg file="${build.dir}/${cod.name}.bar" />
         </exec>
     </target>
     
     <!-- CLEAN SIMULATOR -->
     
     <target name="clean-simulator">
-        <exec executable="${simulator.dir}/clean.bat" dir="${simulator.dir}" />
-        
-        <delete>
-            <fileset dir="${simulator.dir}" includes="*.cod,*.csl,*.cso,*.debug,*.jar" />
-        </delete>
+		<exec executable="cmd" dir="." failonerror="true">
+            <arg value="/c"/>
+            <arg value="${properties.playbook.bbwp.dir}\blackberry-tablet-sdk\bin\blackberry-deploy.bat"/>
+            <arg value="-uninstallApp" />
+            <arg value="-device" />
+            <arg value="${properties.playbook.sim.ip}" />
+            <arg value="-password" />
+            <arg value="${properties.playbook.sim.password}" />
+			<arg value="-package" />
+            <arg file="${build.dir}/${cod.name}.bar" />
+        </exec>
     </target>
     
         <!-- HELPER TASKS -->
@@ -233,6 +174,60 @@
                        global="true"
                        defaultValue="${config.xml.widget.name}" />        
         <echo message="Generated name: ${cod.name}.bar" />
+    </target>
+	
+	    <!-- HELP -->
+    
+    <target name="help">
+        <echo>
+NAME
+  ${ant.project.name}
+
+SYNOPSIS
+  ant TARGET COMMAND [-D&lt;argument&gt;=&lt;value&gt;]...
+
+DESCRIPTION
+  You can build and deploy your project to a device or simulator.
+  
+TARGETS
+  blackberry ........ Builds a cod file and deploys to a device or simulator
+ 
+  playbook .......... Builds a bar file and deploys to a device or simulator
+
+COMMANDS
+  help .............. Show this help menu.
+                        ant, ant help
+
+  load-device ....... Builds and deploys project to a connected USB device.
+                        ant load-device
+
+  load-simulator .... Builds and deploys project to default simulator.
+                        ant load-simulator
+
+  build ............. Compiles and packages the project for deployment.
+                        ant build
+                                              
+  clean ............. Remove all files from the build/ directory.
+                        ant clean
+
+  clean-device ...... Remove this project from the connected USB device.
+                        ant clean-device
+
+  clean-simulator ... Remove this project from the simulator (takes a while).
+                        ant clean-simulator
+
+GETTING STARTED
+  1. Edit project.properties
+
+  2. &lt;ant load-simulator&gt; to run the project on the simulator
+
+  3. Customize your project by editing www/config.xml
+
+  4. To run the project on a BlackBerry device, you will need to obtain
+     code signing keys from RIM. Once you have the key, a project is
+     installed by connecting a BlackBerry via USB and running
+     &lt;ant load-device&gt;.
+        </echo>
     </target>
     
 </project>
