@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
@@ -26,6 +26,12 @@ public final class Device extends Scriptable {
 		
 		if (name.equals(FIELD_PLATFORM)) {
 			return new String(DeviceInfo.getPlatformVersion());
+		}
+		else if (name.equals(FIELD_UUID)) {
+			return new Integer(DeviceInfo.getDeviceId());
+		}
+		else if (name.equals(FIELD_PHONEGAP)) {
+			return "1.0.0rc2";
 		}
 		
 		return super.getField(name);
