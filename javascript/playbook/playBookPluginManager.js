@@ -31,24 +31,34 @@ phonegap.PluginManager = (function(webworksPluginManager) {
     PlayBookPluginManager.prototype.pause = webworksPluginManager.pause;
     PlayBookPluginManager.prototype.destroy = webworksPluginManager.destroy;
 	
-	var retInvalidAction = { "status" : PhoneGap.callbackStatus.INVALID_ACTION, "message" : "Action not found" };
+	var retInvalidAction = { "status" : PhoneGap.callbackStatus.INVALID_ACTION, "message" : "Action not found" },
 
-	var deviceAPI = {
-		execute: function(webWorksResult, action, args, win, fail) {
-			if(action === 'getDeviceInfo') {
-                    //Augment WW result and return it
-					webWorksResult.platform = "PlayBook";
-					return {"status" : PhoneGap.callbackStatus.OK, 
-							"message" : webWorksResult};
-			}  
-            
-            return retInvalidAction;					
-		}
-	};
-	
-    var plugins = {
-		'Device' : deviceAPI
-	};
+	    deviceAPI = {
+            execute: function(webWorksResult, action, args, win, fail) {
+                if(action === 'getDeviceInfo') {
+                        //Augment WW result and return it
+                        webWorksResult.platform = "PlayBook";
+                        return {"status" : PhoneGap.callbackStatus.OK, 
+                                "message" : webWorksResult};
+                }  
+                
+                return retInvalidAction;					
+            }
+        },
+
+        mediaCaptureAPI = {
+            execute: function(webWorksResult, action, args, win, fail) {
+                switch(action) {
+                    case 'captureAudio':
+                }
+                return retInvalidAction;
+            }
+        },
+        
+        plugins = {
+            'Device' : deviceAPI,
+            'MediaCapture' : mediaCaptureAPI
+        };
 	
 	//Instantiate it
 	return new PlayBookPluginManager();

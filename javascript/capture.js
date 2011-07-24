@@ -5,6 +5,7 @@
  * 
  * Copyright (c) 2005-2011, Nitobi Software Inc.
  * Copyright (c) 2011, IBM Corporation
+ * Copyright (c) 2011, Research In Motion Limited 
  */
 
 /**
@@ -303,17 +304,22 @@ function CaptureAudioOptions() {
             }
         }
         
-        PhoneGap.exec(function(mediaFiles) {
-            successCallback(getMediaFiles(mediaFiles));
-        }, function(error) {
-            Capture.onError(error, errorCallback);
-        }, 'MediaCapture', 'captureVideo', [limit, duration, mode]);         
+        PhoneGap.exec(
+            function(mediaFiles) {
+                successCallback(getMediaFiles(mediaFiles));
+            }, 
+            function(error) {
+                Capture.onError(error, errorCallback);
+            },
+            'MediaCapture',
+            'captureVideo',
+            [limit, duration, mode]);         
     };
 
     /**
      * Launch audio recorder application and start an operation to record audio
      * clip(s).
-     * 
+     * param
      * @param successCallback
      *            invoked with a list of MediaFile objects containing captured
      *            audio file properties
@@ -339,11 +345,16 @@ function CaptureAudioOptions() {
             }
         }   
         
-        PhoneGap.exec(function(mediaFiles) {
-            successCallback(getMediaFiles(mediaFiles));
-        }, function(error) {
-            Capture.onError(error, errorCallback);
-        }, 'MediaCapture', 'captureAudio', [limit, duration, mode]);         
+        PhoneGap.exec(
+           function(mediaFiles) {
+                successCallback(getMediaFiles(mediaFiles));
+            }, 
+            function(error) {
+                Capture.onError(error, errorCallback);
+            },
+            'MediaCapture',
+            'captureAudio',
+            [limit, duration, mode]);         
     };
     
     /**

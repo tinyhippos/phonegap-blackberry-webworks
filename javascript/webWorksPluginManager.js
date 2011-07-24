@@ -116,8 +116,6 @@
                         captureMethod = "takeVideo";
                         captureCB();
                         break;
-                    case 'captureAudio':
-
                 }
 
                 return retAsyncCall;
