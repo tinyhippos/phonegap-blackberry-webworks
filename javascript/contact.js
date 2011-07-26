@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
@@ -222,21 +222,23 @@ var ContactOrganization = function(pref, type, name, dept, title) {
         // Utility functions
         //------------------
         
-        /**
-         * Retrieves a BlackBerry contact from the device by unique id.
-         * 
-         * @param uid Unique id of the contact on the device
-         * @return {blackberry.pim.Contact} BlackBerry contact or null if contact 
-         * with specified id is not found
-         */
-        var findByUniqueId = function(uid) {
-            if (!uid) {
-                return null;
+        // NOTE: The user may be working with a partial Contact object, because only
+        // user-specified Contact fields are returned from a find operation (blame 
+        // the W3C spec).  If this is an update to an existing Contact, we don't 
+        // want to clear an attribute from the contact database simply because the 
+        // Contact object that the user passed in contains a null value for that
+        // attribute.  So we only copy the non-null Contact attributes to the 
+        // BlackBerry contact object before saving.
+        //
+        // This means that a user must explicitly set a Contact attribute to a 
+        // non-null value in order to update it in the contact database.
+        //
+        // name
+        if (contact.name !== null) {   
+            if (contact.name.givenName) {
+                bbContact.firstName = contact.name.givenName;
             }
-            var bbContacts = blackberry.pim.Contact.find(
-                    new blackberry.find.FilterExpression("uid", "==", uid));
-            return bbContacts[0] || null;
-        };
+            if (contact.name.familyName) {
 
         /**
          * Creates a BlackBerry contact object from the W3C Contact object 
@@ -250,9 +252,20 @@ var ContactOrganization = function(pref, type, name, dept, title) {
             if (!contact) {
                 return;
             }
-            
-            var bbContact = null;
-            var update = false;
+            if (contact.name.honorificPrefix) {
+                bbContact.title = contact.name.honorificPrefix;
+            }
+        }
+        
+        // display name
+        if (contact.displayName !== null) {
+            bbContact.user1 = contact.displayName;
+        }
+        
+        // note
+        if (contact.note !== null) {
+            bbContact.note = contact.note;
+        }
 
             // if the underlying BlackBerry contact already exists, retrieve it for update
             if (contact.id) {
@@ -917,13 +930,13 @@ var ContactOrganization = function(pref, type, name, dept, title) {
                 else if (field.indexOf('categories') === 0) {
                     contact.categories = bbContact.categories; 
                 }
-                // urls
-                else if (field.indexOf('urls') === 0) {
-                    var urls = [];
-                    if (bbContact.webpage) {
-                        urls.push(new ContactField(null, bbContact.webpage));
-                    }
-                    contact.urls = urls;
+                contact.phoneNumbers = phoneNumbers.length > 0 ? phoneNumbers : null;
+            }
+            // emails
+            else if (field.indexOf('emails') === 0) {
+                var emails = [];
+                if (bbContact.email1) {
+                    emails.push(new ContactField(null, bbContact.email1, null));
                 }
                 // photos
                 else if (field.indexOf('photos') === 0) {
@@ -935,7 +948,9 @@ var ContactOrganization = function(pref, type, name, dept, title) {
                     }
                     contact.photos = photos;
                 }
+                contact.emails = emails.length > 0 ? emails : null;
             }
+                contact.addresses = addresses.length > 0 ? addresses : null;
 
             return contact;
         };    
@@ -953,15 +968,54 @@ var ContactOrganization = function(pref, type, name, dept, title) {
             if (!bbAddress) {
                 return null;
             }
-            
-            var address1 = bbAddress.address1 || "";
-            var address2 = bbAddress.address2 || "";
-            var streetAddress = address1 + ", " + address2;
-            var locality = bbAddress.city || "";
-            var region = bbAddress.stateProvince || "";
-            var postalCode = bbAddress.zipPostal || "";
-            var country = bbAddress.country || "";
-            var formatted = streetAddress + ", " + locality + ", " + region + ", " + postalCode + ", " + country;
+            // birthday
+            else if (field.indexOf('birthday') === 0) {
+                if (bbContact.birthday) {
+                    contact.birthday = bbContact.birthday;
+                }
+            }
+            // note
+            else if (field.indexOf('note') === 0) {
+                if (bbContact.note) {
+                    contact.note = bbContact.note;
+                }
+            }
+            // organizations
+            else if (field.indexOf('organizations') === 0) {
+                var organizations = [];
+                if (bbContact.company || bbContact.jobTitle) {
+                    organizations.push(
+                        new ContactOrganization(null, null, bbContact.company, null, bbContact.jobTitle));
+                }
+                contact.organizations = organizations.length > 0 ? organizations : null;
+            }
+            // categories
+            else if (field.indexOf('categories') === 0) {
+                if (bbContact.categories && bbContact.categories.length > 0) {
+                    contact.categories = bbContact.categories;
+                } else {
+                    contact.categories = null;
+                }
+            }
+            // urls
+            else if (field.indexOf('urls') === 0) {
+                var urls = [];
+                if (bbContact.webpage) {
+                    urls.push(new ContactField(null, bbContact.webpage));
+                }
+                contact.urls = urls.length > 0 ? urls : null;
+            }
+            // photos
+            else if (field.indexOf('photos') === 0) {
+                var photos = [];
+                // The BlackBerry Contact object will have a picture attribute
+                // with Base64 encoded image
+                if (bbContact.picture) {
+                    photos.push(new ContactField('base64', bbContact.picture));
+                }
+                contact.photos = photos.length > 0 ? photos : null;
+            }
+        }
 
             return new ContactAddress(null, type, formatted, streetAddress, locality, region, postalCode, country);
         };
