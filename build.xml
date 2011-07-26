@@ -39,16 +39,31 @@
     <target name="build-javascript">
         <mkdir dir="${build.dir}/${js.path}" />
         
-        <!-- uncompressed -->
+        <!-- BB Javascript -->
         <concat destfile="${build.dir}/${js.file}" append="false">
             <fileset dir="${js.src}">
                 <include name="*.js" />
             </fileset>
         </concat>
-
+		<concat destfile="${build.dir}/${js.file}" append="true">
+            <fileset dir="${js.src}/blackberry" includes="*.js"/>
+        </concat>
         <!-- compressed -->
         <compress-js input-file="${build.dir}/${js.file}"
                      output-file="${build.dir}/${js.file-min}" />
+					 
+					 
+		<!-- PB Javascript -->
+        <mkdir dir="${build.dir}/${playbook.js.path}" />
+        <concat destfile="${build.dir}/${playbook.js.path}/${js.basename}" append="false">
+            <fileset dir="${js.src}" includes="*.js" excludes="accelerometer.js, contact.js, file.js, filetransfer.js, geolocation.js"/>
+        </concat>
+        <concat destfile="${build.dir}/${playbook.js.path}/${js.basename}" append="true">
+            <fileset dir="${js.src}/playbook" includes="*.js"/>
+        </concat>
+        <!-- compressed -->
+        <compress-js input-file="${build.dir}/${playbook.js.path}/${js.basename}"
+                     output-file="${build.dir}/${playbook.js.path}/${js.basename-min}" />
     </target>
     
     <!-- BUILD BLACKBERRY EXTENSION -->
@@ -64,19 +79,7 @@
     
     <!-- BUILD PLAYBOOK EXTENSION -->
     
-    <target name="build-pb-extension">       
-        
-        <!-- Javascript -->
-        <mkdir dir="${build.dir}/${playbook.js.path}" />
-        <concat destfile="${build.dir}/${playbook.js.path}/${js.basename}" append="false">
-            <fileset dir="${js.src}" includes="*.js" excludes="accelerometer.js, contact.js, file.js, filetransfer.js, geolocation.js, position.js"/>
-        </concat>
-        <concat destfile="${build.dir}/${playbook.js.path}/${js.basename}" append="true">
-            <fileset dir="${js.src}/playbook" includes="*.js"/>
-        </concat>
-        <!-- compressed -->
-        <compress-js input-file="${build.dir}/${playbook.js.path}/${js.basename}"
-                     output-file="${build.dir}/${playbook.js.path}/${js.basename-min}" />
+    <target name="build-pb-extension">               
 
         <!-- Copy Ext -->
         <mkdir dir="${build.dir}/${playbook.ext.path}" />

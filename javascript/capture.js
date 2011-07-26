@@ -5,6 +5,7 @@
  * 
  * Copyright (c) 2005-2011, Nitobi Software Inc.
  * Copyright (c) 2011, IBM Corporation
+ * Copyright (c) 2011, Research In Motion Limited.
  */
 
 /**
@@ -352,6 +353,12 @@ function CaptureAudioOptions() {
      */
     PhoneGap.addConstructor(function() {
         PhoneGap.waitForInitialization(captureId);
+		
+        //No way to guarantee order of constructors so just incase this goes first
+		if (typeof navigator.device === 'undefined') {
+            navigator.device = {};
+        }
+		
         navigator.device.capture = new Capture();
     });
 }());

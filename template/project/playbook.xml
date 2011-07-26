@@ -7,6 +7,7 @@
     <property name="widget.dir"   location="${build.dir}/widget" />
     <property name="code.sign"    value="false" />
     <property name="generate.ext"   value="cod" />
+	<property name="build.num.file" value="buildId.txt" />
     
     
     <!-- BlackBerry WebWorks Packager directory is required. -->
@@ -98,7 +99,7 @@
             <property name="properties.playbook.bbwp.bin" location="${properties.playbook.bbwp.dir}/bbwp.exe" />
             <available file="${properties.playbook.bbwp.bin}" property="properties.playbook.bbwp.exists" />
             <fail unless="properties.playbook.bbwp.exists" message="Cannot find ${properties.playbook.bbwp.bin}. Please edit 'bbwp.dir' in your 'project.properties' file." />
-
+			<buildnumber file="${build.num.file}" />
             <if>
                 <equals arg1="@{code-sign}" arg2="true" />
                 <then>
@@ -110,6 +111,8 @@
                         <arg value="${properties.playbook.sigtool.p12.password}" />
                         <arg value="-o" />
                         <arg file="${build.dir}" />
+						<arg value="-buildId" />
+						<arg value="${build.number}" />
                     </exec>
                 </then>
                 <else>
@@ -117,6 +120,8 @@
                         <arg file="${build.dir}/${cod.name}.zip" />
                         <arg value="-o" />
                         <arg file="${build.dir}" />
+						<arg value="-buildId" />
+						<arg value="${build.number}" />
                     </exec>
                 </else>
             </if>

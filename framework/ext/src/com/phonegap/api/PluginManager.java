@@ -4,6 +4,7 @@
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010, IBM Corporation
+ * Copyright (c) 2011 Research In Motion Limited.
  */
 package com.phonegap.api;
 
@@ -69,6 +70,7 @@ public final class PluginManager extends Scriptable {
      */
     public PluginManager(PhoneGapExtension ext) {
         this.pluginManagerFunction = new PluginManagerFunction(ext, this);
+		this.addService("Device", "com.phonegap.device.Device");
         this.addService("Camera", "com.phonegap.camera.Camera");
         this.addService("Network Status", "com.phonegap.network.Network");
         this.addService("Notification", "com.phonegap.notification.Notification");

@@ -4,6 +4,7 @@
  * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010, IBM Corporation
+ * Copyright (c) 2011, Research In Motion Limited.
  */
 package com.phonegap;
 
@@ -42,13 +43,15 @@ public final class PhoneGapExtension implements WidgetExtension {
     // Application GUID
     //
     protected static long appID;
+    
+    private static final String FEATURE_ID ="com.phonegap";
 
 	// Called when the BlackBerry Widget references this extension for the first time.
 	// It provides a list of feature IDs exposed by this extension.
 	//
 	public String[] getFeatureList() {
 		String[] result = new String[1];
-		result[0] = "phonegap";
+		result[0] = FEATURE_ID;
 		return result;
 	}
 
@@ -60,10 +63,9 @@ public final class PhoneGapExtension implements WidgetExtension {
 		
 		script = scriptEngine;
 		
-		if (feature.equals("phonegap")) {
-			scriptEngine.addExtension("phonegap.device",         new Device());
-			scriptEngine.addExtension("phonegap.PluginManager",  new PluginManager(this));
-			scriptEngine.addExtension("phonegap.Logger",         new Log());			
+		if (feature.equals(FEATURE_ID)) {
+			scriptEngine.addExtension("com.phonegap.JavaPluginManager",  new PluginManager(this));
+			scriptEngine.addExtension("com.phonegap.Logger",         new Log());			
 			
 			// let PhoneGap JavaScript know that extensions have been loaded
 			// if this is premature, we at least set the _nativeReady flag to true
