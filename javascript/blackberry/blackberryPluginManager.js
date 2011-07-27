@@ -21,10 +21,6 @@ window.phonegap.PluginManager = (function (webworksPluginManager) {
                     com.phonegap.Logger.log(args);
                     return {"status" : PhoneGap.callbackStatus.OK,
                             "message" : 'Message logged to console: ' + args};
-                case 'enable':
-                    com.phonegap.Logger.enable();
-                    return {"status" : PhoneGap.callbackStatus.OK,
-                            "message" : 'Nothing to enable on PlayBook'};
                 }
                 return retInvalidAction;
             }

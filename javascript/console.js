@@ -1,7 +1,8 @@
+
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
- *
+ * 
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010-2011, IBM Corporation
  * Copyright (c) 2011, Research In Motion Limited
@@ -32,15 +33,10 @@
         PhoneGap.exec(null, null, 'Logger', 'log', msg);
     };
 
-    Logger.prototype.enable = function () {
-        PhoneGap.exec(null, null, 'Logger', 'enable', {});
-    };
-
     /**
      * Define phonegap.Logger object where the BB API expects to see it
      */
     PhoneGap.addConstructor(function () {
         phonegap.Logger = new Logger();
-        phonegap.Logger.enable();
     });
 }());

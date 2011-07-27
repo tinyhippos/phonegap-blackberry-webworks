@@ -90,7 +90,7 @@ public final class PhoneGapExtension implements WidgetExtension {
                         plugin.getAttributes().getNamedItem("value").getNodeValue());
             }
 
-            scriptEngine.addExtension("com.phonegap.PluginManager",  pluginManager);
+            scriptEngine.addExtension("com.phonegap.JavaPluginManager",  pluginManager);
             scriptEngine.addExtension("com.phonegap.Logger",         new Log());
 
             // let PhoneGap JavaScript know that extensions have been loaded
