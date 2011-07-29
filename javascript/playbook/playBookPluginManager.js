@@ -50,6 +50,7 @@ phonegap.PluginManager = (function(webworksPluginManager) {
             execute: function(webWorksResult, action, args, win, fail) {
                 switch(action) {
                     case 'captureAudio':
+                       
                 }
                 return retInvalidAction;
             }
