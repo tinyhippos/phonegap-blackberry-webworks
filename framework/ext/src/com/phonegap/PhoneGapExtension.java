@@ -1,4 +1,4 @@
-﻿/*
+/*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
@@ -48,18 +48,19 @@ public final class PhoneGapExtension implements WidgetExtension {
     //
     protected static long appID;
     
-    private static final String FEATURE_ID ="com.phonegap";
     // Plugin Manager
     //
     protected PluginManager pluginManager;
+    
+    // Feature ID
+    //
+    private static final String FEATURE_ID ="com.phonegap";
 
 	// Called when the BlackBerry Widget references this extension for the first time.
 	// It provides a list of feature IDs exposed by this extension.
 	//
 	public String[] getFeatureList() {
-		String[] result = new String[1];
-		result[0] = FEATURE_ID;
-		return result;
+		return new String[] {FEATURE_ID};
 	}
 
     // Called whenever a widget loads a resource that requires a feature ID that is supplied
