@@ -46,16 +46,6 @@ phonegap.PluginManager = (function(webworksPluginManager) {
             }
         },
 
-        mediaCaptureAPI = {
-            execute: function(webWorksResult, action, args, win, fail) {
-                switch(action) {
-                    case 'captureAudio':
-                       
-                }
-                return retInvalidAction;
-            }
-        },
-        
         plugins = {
             'Device' : deviceAPI,
             'MediaCapture' : mediaCaptureAPI

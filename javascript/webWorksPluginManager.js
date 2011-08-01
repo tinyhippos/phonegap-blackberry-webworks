@@ -116,6 +116,8 @@
                         captureMethod = "takeVideo";
                         captureCB();
                         break;
+                    case 'captureAudio':
+                        return {"status": PhonGap.callbackStatus.INVALID_ACTION, "message": "captureAudio is not currently supported"};
                 }
 
                 return retAsyncCall;
