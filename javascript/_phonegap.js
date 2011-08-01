@@ -2,9 +2,10 @@
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
- * 
+ *
  * Copyright (c) 2005-2010, Nitobi Software Inc.
  * Copyright (c) 2010-2011, IBM Corporation
+ * Copyright (c) 2011, Research In Motion Limited.
  */
 
 /**
@@ -12,7 +13,7 @@
  * information about the state of PhoneGap.
  */
 var PhoneGap = PhoneGap || (function() {
-    
+
     /**
      * PhoneGap object.
      */
@@ -58,7 +59,7 @@ var PhoneGap = PhoneGap || (function() {
     };
 
     /**
-     * Subscribes the given function to the channel. Any time that 
+     * Subscribes the given function to the channel. Any time that
      * Channel.fire is called so too will the function.
      * Optionally specify an execution context for the function
      * and a guid that can be used to stop subscribing to the channel.
@@ -98,7 +99,7 @@ var PhoneGap = PhoneGap || (function() {
         return g;
     };
 
-    /** 
+    /**
      * Unsubscribes the function with the given guid from the channel.
      */
     PhoneGap.Channel.prototype.unsubscribe = function(g) {
@@ -107,7 +108,7 @@ var PhoneGap = PhoneGap || (function() {
         delete this.handlers[g];
     };
 
-    /** 
+    /**
      * Calls all functions subscribed to this channel.
      */
     PhoneGap.Channel.prototype.fire = function(e) {
@@ -144,7 +145,7 @@ var PhoneGap = PhoneGap || (function() {
     };
 
     /**
-     * onDOMContentLoaded channel is fired when the DOM content 
+     * onDOMContentLoaded channel is fired when the DOM content
      * of the page has been parsed.
      */
     PhoneGap.onDOMContentLoaded = new PhoneGap.Channel('onDOMContentLoaded');
@@ -198,7 +199,7 @@ var PhoneGap = PhoneGap || (function() {
 
     /**
      * PhoneGap Channels that must fire before "deviceready" is fired.
-     */ 
+     */
     PhoneGap.deviceReadyChannelsArray = [ PhoneGap.onPhoneGapReady, PhoneGap.onPhoneGapInfoReady, PhoneGap.onPhoneGapConnectionReady ];
 
     /**
@@ -210,7 +211,7 @@ var PhoneGap = PhoneGap || (function() {
      * Indicate that a feature needs to be initialized before it is ready to be
      * used. This holds up PhoneGap's "deviceready" event until the feature has been
      * initialized and PhoneGap.initializationComplete(feature) is called.
-     * 
+     *
      * @param feature {String} The unique feature name
      */
     PhoneGap.waitForInitialization = function(feature) {
@@ -225,7 +226,7 @@ var PhoneGap = PhoneGap || (function() {
     /**
      * Indicate that initialization code has completed and the feature is ready to
      * be used.
-     * 
+     *
      * @param feature {String} The unique feature name
      */
     PhoneGap.initializationComplete = function(feature) {
@@ -246,15 +247,15 @@ var PhoneGap = PhoneGap || (function() {
         // Fire event to notify that all objects are created
         PhoneGap.onPhoneGapReady.fire();
 
-        // Fire onDeviceReady event once all constructors have run and 
+        // Fire onDeviceReady event once all constructors have run and
         // PhoneGap info has been received from native side.
         PhoneGap.Channel.join(function() {
             PhoneGap.onDeviceReady.fire();
-            
+
             // Fire the onresume event, since first one happens before JavaScript is loaded
             PhoneGap.onResume.fire();
-        }, PhoneGap.deviceReadyChannelsArray);    
-        
+        }, PhoneGap.deviceReadyChannelsArray);
+
     }, [ PhoneGap.onDOMContentLoaded, PhoneGap.onNativeReady ]);
 
     //---------------
@@ -263,7 +264,7 @@ var PhoneGap = PhoneGap || (function() {
 
     /**
      * Listen for DOMContentLoaded and notify our channel subscribers.
-     */ 
+     */
     document.addEventListener('DOMContentLoaded', function() {
         PhoneGap.onDOMContentLoaded.fire();
     }, false);
@@ -301,23 +302,23 @@ var PhoneGap = PhoneGap || (function() {
     };
 
     /**
-     * When BlackBerry WebWorks application is brought to foreground, 
+     * When BlackBerry WebWorks application is brought to foreground,
      * fire onResume event.
      */
     blackberry.app.event.onForeground(function() {
         PhoneGap.onResume.fire();
-        
+
         // notify PhoneGap JavaScript Extension
         phonegap.PluginManager.resume();
     });
 
     /**
-     * When BlackBerry WebWorks application is sent to background, 
+     * When BlackBerry WebWorks application is sent to background,
      * fire onPause event.
      */
     blackberry.app.event.onBackground(function() {
        PhoneGap.onPause.fire();
-       
+
        // notify PhoneGap JavaScript Extension
        phonegap.PluginManager.pause();
     });
@@ -332,20 +333,20 @@ var PhoneGap = PhoneGap || (function() {
 
             // allow PhoneGap JavaScript Extension opportunity to cleanup
             phonegap.PluginManager.destroy();
-            
+
             // exit the app
             blackberry.app.exit();
         });
     }
-    
+
     //--------
     // Plugins
     //--------
 
     /**
-     * Add an initialization function to a queue that ensures it will run and 
+     * Add an initialization function to a queue that ensures it will run and
      * initialize application constructors only once PhoneGap has been initialized.
-     * 
+     *
      * @param {Function} func The function callback you want run once PhoneGap is initialized
      */
     PhoneGap.addConstructor = function(func) {
@@ -353,7 +354,7 @@ var PhoneGap = PhoneGap || (function() {
             try {
                 func();
             } catch(e) {
-                if (typeof(debug['log']) == 'function') {
+                if (typeof(debug) != 'undefined' && typeof(debug['log']) == 'function') {
                     debug.log("Failed to run constructor: " + debug.processMessage(e));
                 } else {
                     alert("Failed to run constructor: " + e.message);
@@ -372,7 +373,7 @@ var PhoneGap = PhoneGap || (function() {
     /**
      * Adds new plugin object to window.plugins.
      * The plugin is accessed using window.plugins.<name>
-     * 
+     *
      * @param name      The plugin name
      * @param obj       The plugin object
      */
@@ -471,40 +472,39 @@ var PhoneGap = PhoneGap || (function() {
      */
     PhoneGap.exec = function(success, fail, service, action, args) {
         try {
-            // Note: Device returns string, but for some reason emulator returns object - so convert to string.
-            var v = phonegap.PluginManager.exec(success, fail, service, action, args);            
-            
-			// If status is OK, then return value back to caller
-			if (v.status == PhoneGap.callbackStatus.OK) {
+            var v = phonegap.PluginManager.exec(success, fail, service, action, args);
 
-				// If there is a success callback, then call it now with returned value
-				if (success) {
-					try {
-						success(v.message);
-					}
-					catch (e) {
-						console.log("Error in success callback: "+callbackId+" = "+e);
-					}
+            // If status is OK, then return value back to caller
+            if (v.status == PhoneGap.callbackStatus.OK) {
 
-				}
-				return v.message;
+                // If there is a success callback, then call it now with returned value
+                if (success) {
+                    try {
+                        success(v.message);
+                    }
+                    catch (e) {
+                        console.log("Error in success callback: "+callbackId+" = "+e);
+                    }
+
+                }
+                return v.message;
             }else if (v.status == PhoneGap.callbackStatus.NO_RESULT){
-			
-			}else {
-                // If error, then display error
-				console.log("Error: Status="+v.status+" Message="+v.message);
 
-				// If there is a fail callback, then call it now with returned value
-				if (fail) {
-					try {
-						fail(v.message);
-					}
-					catch (e) {
-						console.log("Error in error callback: "+callbackId+" = "+e);
-					}
-				}
-				return null;
-			}
+            }else {
+                // If error, then display error
+                console.log("Error: Status="+v.status+" Message="+v.message);
+
+                // If there is a fail callback, then call it now with returned value
+                if (fail) {
+                    try {
+                        fail(v.message);
+                    }
+                    catch (e) {
+                        console.log("Error in error callback: "+callbackId+" = "+e);
+                    }
+                }
+                return null;
+            }
         } catch (e) {
             console.log("Error: "+e);
         }
@@ -518,10 +518,10 @@ var PhoneGap = PhoneGap || (function() {
      * Does a deep clone of the object.
      */
     PhoneGap.clone = function(obj) {
-        if(!obj) { 
+        if(!obj) {
             return obj;
         }
-        
+
         if(obj instanceof Array){
             var retVal = new Array();
             for(var i = 0; i < obj.length; ++i){
@@ -529,15 +529,15 @@ var PhoneGap = PhoneGap || (function() {
             }
             return retVal;
         }
-        
+
         if (obj instanceof Function) {
             return obj;
         }
-        
+
         if(!(obj instanceof Object)){
             return obj;
         }
-        
+
         if(obj instanceof Date){
             return obj;
         }
@@ -592,7 +592,7 @@ var PhoneGap = PhoneGap || (function() {
      */
     PhoneGap.extend = (function() {
         // proxy used to establish prototype chain
-        var F = function() {}; 
+        var F = function() {};
         // extend Child from Parent
         return function(Child, Parent) {
             F.prototype = Parent.prototype;
@@ -601,12 +601,12 @@ var PhoneGap = PhoneGap || (function() {
             Child.prototype.constructor = Child;
         };
     }());
-    
+
     return PhoneGap;
 }());
 
 // _nativeReady is global variable that the native side can set
-// to signify that the native code is ready. It is a global since 
+// to signify that the native code is ready. It is a global since
 // it may be called before any PhoneGap JS is ready.
 if (typeof _nativeReady !== 'undefined') { PhoneGap.onNativeReady.fire(); }
 

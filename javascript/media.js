@@ -1,203 +1,357 @@
-f (!PhoneGap.hasResource("media")) {
-PhoneGap.addResource("media");
+
+/*
+ * PhoneGap is available under *either* the terms of the modified BSD license *or* the
+ * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
+ * 
+ * Copyright (c) 2005-2011, Nitobi Software Inc.
+ * Copyright (c) 2011, IBM Corporation
+ */
 
 /**
- * This class provides access to the device media, interfaces to both sound and video
- *
- * @constructor
- * @param src                   The file name or url to play
- * @param successCallback       The callback to be called when the file is done playing or recording.
- *                                  successCallback() - OPTIONAL
- * @param errorCallback         The callback to be called if there is an error.
- *                                  errorCallback(int errorCode) - OPTIONAL
- * @param statusCallback        The callback to be called when media status has changed.
- *                                  statusCallback(int statusCode) - OPTIONAL
- * @param positionCallback      The callback to be called when media position has changed.
- *                                  positionCallback(long position) - OPTIONAL
+ * MediaFileData error.
  */
-var Media = function(src, successCallback, errorCallback, statusCallback, positionCallback) {
+var MediaFileDataError = function() {
+    this.code = 0;
+};
 
-    // successCallback optional
-    if (successCallback && (typeof successCallback !== "function")) {
-        console.log("Media Error: successCallback is not a function");
+MediaFileDataError.UNKNOWN_ERROR = 0;
+MediaFileDataError.TIMEOUT_ERROR = 1;
+
+/**
+ * Media file data.
+ * codecs {DOMString} The actual format of the audio and video content.
+ * bitrate {Number} The average bitrate of the content. In the case of an image, this attribute has value 0.
+ * height {Number} The height of the image or video in pixels. In the case of a sound clip, this attribute has value 0.
+ * width {Number The width of the image or video in pixels. In the case of a sound clip, this attribute has value 0.
+ * duration {Number} The length of the video or sound clip in seconds. In the case of an image, this attribute has value 0.
+ */
+var MediaFileData = function(){
+    this.codecs = null;
+    this.bitrate = 0;
+    this.height = 0;
+    this.width = 0;
+    this.duration = 0;
+};
+
+/**
+ * Represents media file properties.
+ */
+var MediaFile = MediaFile || (function() {
+    /**
+     * Constructor.
+     */
+    function MediaFile() {
+        MediaFile.__super__.constructor.apply(this, arguments);
+    };
+ 
+    // extend File
+    PhoneGap.extend(MediaFile, File);
+    
+    /**
+     * Obtains the format data of the media file.
+     */
+    MediaFile.prototype.getFormatData = function(successCallback, errorCallback) {
+        // there is no API (WebWorks or native) that provides this info
+        try {
+            successCallback(new MediaFileData());
+        } 
+        catch (e) {
+            console.log('Unable to invoke success callback: ' + e);
+        }
+    };
+    
+    return MediaFile;
+}());
+
+/**
+ * Media capture error.
+ */
+var CaptureError = function() {
+    this.code = 0;
+};
+
+// Camera or microphone failed to capture image or sound. 
+CaptureError.CAPTURE_INTERNAL_ERR = 0;
+// Camera application or audio capture application is currently serving other capture request.
+CaptureError.CAPTURE_APPLICATION_BUSY = 1;
+// Invalid use of the API (e.g. limit parameter has value less than one).
+CaptureError.CAPTURE_INVALID_ARGUMENT = 2;
+// User exited camera application or audio capture application before capturing anything.
+CaptureError.CAPTURE_NO_MEDIA_FILES = 3;
+// The requested capture operation is not supported.
+CaptureError.CAPTURE_NOT_SUPPORTED = 20;
+
+/**
+ * Encapsulates a set of parameters that the capture device supports.
+ */
+var ConfigurationData = function() {
+    // The ASCII-encoded string in lower case representing the media type. 
+    this.type = null;
+    // The height attribute represents height of the image or video in pixels. 
+    // In the case of a sound clip this attribute has value 0. 
+    this.height = 0;
+    // The width attribute represents width of the image or video in pixels. 
+    // In the case of a sound clip this attribute has value 0
+    this.width = 0;
+};
+
+/**
+ * Encapsulates all image capture operation configuration options.
+ */
+var CaptureImageOptions = function() {
+    // Upper limit of images user can take. Value must be equal or greater than 1.
+    this.limit = 1; 
+    // The selected image mode. Must match with one of the elements in supportedImageModes array.
+    this.mode = null;
+};
+
+/**
+ * Encapsulates all video capture operation configuration options.
+ */
+var CaptureVideoOptions = function() {
+    // Upper limit of videos user can record. Value must be equal or greater than 1.
+    this.limit = 1;
+    // Maximum duration of a single video clip in seconds.
+    this.duration = 0;
+    // The selected video mode. Must match with one of the elements in supportedVideoModes array.
+    this.mode = null;
+};
+
+/**
+ * Encapsulates all audio capture operation configuration options.
+ */
+var CaptureAudioOptions = function() {
+    // Upper limit of sound clips user can record. Value must be equal or greater than 1.
+    this.limit = 1;
+    // Maximum duration of a single sound clip in seconds.
+    this.duration = 0;
+    // The selected audio mode. Must match with one of the elements in supportedAudioModes array.
+    this.mode = null;
+};
+
+/**
+ * navigator.device.capture 
+ */
+(function() {
+    /**
+     * Check that navigator.device.capture has not been initialized.
+     */
+    if (navigator.device && typeof navigator.device.capture !== 'undefined') {
         return;
     }
+    
+    /**
+     * Identification string for the capture plugin.
+     */
+    var captureId = 'navigator.device.capture';
+    
+    /**
+     * Media capture object.
+     */
+    function Capture() {
+        var self = this, 
+            // let PhoneGap know we're ready after retrieving all of the 
+            // supported capture modes         
+            addCaptureModes = function(type, modes) {
+                self[type] = modes;
+                if (typeof self.supportedAudioModes !== 'undefined' 
+                    && typeof self.supportedImageModes !== 'undefined'
+                    && typeof self.supportedVideoModes !== 'undefined') {
+                    PhoneGap.initializationComplete(captureId);                    
+                }
+            };
+        
+        // populate supported capture modes
+        PhoneGap.exec(function(modes) {
+            addCaptureModes('supportedAudioModes', parseArray(modes));
+        }, function(error) {
+            console.log('Unable to retrieve supported audio modes: ' + error);
+            addCaptureModes('supportedAudioModes', []);
+        }, 'MediaCapture', 'getSupportedAudioModes', []); 
+        
+        PhoneGap.exec(function(modes) {
+            addCaptureModes('supportedImageModes', parseArray(modes));
+        }, function(error) {
+            console.log('Unable to retrieve supported image modes: ' + error);
+            addCaptureModes('supportedImageModes', []);
+        }, 'MediaCapture', 'getSupportedImageModes', []); 
+        
+        PhoneGap.exec(function(modes) {
+            addCaptureModes('supportedVideoModes', parseArray(modes));
+        }, function(error) {
+            console.log('Unable to retrieve supported video modes: ' + error);
+            addCaptureModes('supportedVideoModes', []);
+        }, 'MediaCapture', 'getSupportedVideoModes', []); 
+    };
+    
+    /**
+     * Utility function to parse JSON array.
+     */
+    var parseArray = function(array) {
+        var result = [];
 
-    // errorCallback optional
-    if (errorCallback && (typeof errorCallback !== "function")) {
-        console.log("Media Error: errorCallback is not a function");
-        return;
-    }
+        // get objects from JSONArray
+        try {
+            result = JSON.parse(array);
+        }
+        catch (e) {
+            console.log('unable to parse JSON: ' + e);
+            return result;
+        }
+        
+        return result;
+    };
+    
+    /**
+     * Utility function to create MediaFile objects from JSON.
+     */
+    var getMediaFiles = function(array) {
+        var mediaFiles = [], file, objs, obj, len, i, j;
+        
+        objs = parseArray(array);
+        for (i = 0; len = objs.length, i < len; i += 1) {
+            obj = objs[i];
+            file = new MediaFile();
+            for (j in obj) {
+                file[j] = obj[j];
+            }
+            mediaFiles.push(file);
+        }
+        
+        return mediaFiles;
+    };
+    
+    /**
+     * Static method for invoking error callbacks.
+     * 
+     * @param error         CaptureError code
+     * @param errorCallback error callback to invoke
+     */
+    Capture.onError = function(error, errorCallback) {
+        var err = new CaptureError();
+        err.code = error;
+        try {
+            errorCallback(err);
+        } catch (e) {
+            console.log('Error invoking callback: ' + e);
+        }
+    };
 
-    // statusCallback optional
-    if (statusCallback && (typeof statusCallback !== "function")) {
-        console.log("Media Error: statusCallback is not a function");
-        return;
-    }
+    /**
+     * Launch camera application and start an operation to record images.
+     * 
+     * @param successCallback
+     *            invoked with a list of MediaFile objects containing captured
+     *            image file properties
+     * @param errorCallback
+     *            invoked with a CaptureError if capture is unsuccessful
+     * @param options
+     *            {CaptureVideoOptions} options for capturing video
+     */
+    Capture.prototype.captureImage = function(successCallback, errorCallback, options) {
+        var limit = 1,
+            mode = null;
 
-    // statusCallback optional
-    if (positionCallback && (typeof positionCallback !== "function")) {
-        console.log("Media Error: positionCallback is not a function");
-        return;
-    }
-
-    this.id = PhoneGap.createUUID();
-    PhoneGap.mediaObjects[this.id] = this;
-    this.src = src;
-    this.successCallback = successCallback;
-    this.errorCallback = errorCallback;
-    this.statusCallback = statusCallback;
-    this.positionCallback = positionCallback;
-    this._duration = -1;
-    this._position = -1;
-};
-
-// Media messages
-Media.MEDIA_STATE = 1;
-Media.MEDIA_DURATION = 2;
-Media.MEDIA_ERROR = 9;
-
-// Media states
-Media.MEDIA_NONE = 0;
-Media.MEDIA_STARTING = 1;
-Media.MEDIA_RUNNING = 2;
-Media.MEDIA_PAUSED = 3;
-Media.MEDIA_STOPPED = 4;
-Media.MEDIA_MSG = ["None", "Starting", "Running", "Paused", "Stopped"];
-
-// TODO: Will MediaError be used?
-/**
- * This class contains information about any Media errors.
- * @constructor
- */
-var MediaError = function() {
-    this.code = null;
-    this.message = "";
-};
-
-MediaError.MEDIA_ERR_ABORTED        = 1;
-MediaError.MEDIA_ERR_NETWORK        = 2;
-MediaError.MEDIA_ERR_DECODE         = 3;
-MediaError.MEDIA_ERR_NONE_SUPPORTED = 4;
-
-/**
- * Start or resume playing audio file.
- */
-Media.prototype.play = function() {
-    PhoneGap.exec(null, null, "Media", "startPlayingAudio", [this.id, this.src]);
-};
-
-/**
- * Stop playing audio file.
- */
-Media.prototype.stop = function() {
-    return PhoneGap.exec(null, null, "Media", "stopPlayingAudio", [this.id]);
-};
-
-/**
- * Seek or jump to a new time in the track..
- */
-Media.prototype.seekTo = function(milliseconds) {
-    PhoneGap.exec(null, null, "Media", "seekToAudio", [this.id, milliseconds]);
-};
-
-/**
- * Pause playing audio file.
- */
-Media.prototype.pause = function() {
-    PhoneGap.exec(null, null, "Media", "pausePlayingAudio", [this.id]);
-};
-
-/**
- * Get duration of an audio file.
- * The duration is only set for audio that is playing, paused or stopped.
- *
- * @return      duration or -1 if not known.
- */
-Media.prototype.getDuration = function() {
-    return this._duration;
-};
-
-/**
- * Get position of audio.
- */
-Media.prototype.getCurrentPosition = function(success, fail) {
-    PhoneGap.exec(success, fail, "Media", "getCurrentPositionAudio", [this.id]);
-};
-
-/**
- * Start recording audio file.
- */
-Media.prototype.startRecord = function() {
-    PhoneGap.exec(null, null, "Media", "startRecordingAudio", [this.id, this.src]);
-};
-
-/**
- * Stop recording audio file.
- */
-Media.prototype.stopRecord = function() {
-    PhoneGap.exec(null, null, "Media", "stopRecordingAudio", [this.id]);
-};
-
-/**
- * Release the resources.
- */
-Media.prototype.release = function() {
-    PhoneGap.exec(null, null, "Media", "release", [this.id]);
-};
-
-/**
- * List of media objects.
- * PRIVATE
- */
-PhoneGap.mediaObjects = {};
-
-/**
- * Object that receives native callbacks.
- * PRIVATE
- * @constructor
- */
-PhoneGap.Media = function() {};
-
-/**
- * Get the media object.
- * PRIVATE
- *
- * @param id            The media object id (string)
- */
-PhoneGap.Media.getMediaObject = function(id) {
-    return PhoneGap.mediaObjects[id];
-};
-
-/**
- * Audio has status update.
- * PRIVATE
- *
- * @param id            The media object id (string)
- * @param status        The status code (int)
- * @param msg           The status message (string)
- */
-PhoneGap.Media.onStatus = function(id, msg, value) {
-    var media = PhoneGap.mediaObjects[id];
-
-    // If state update
-    if (msg === Media.MEDIA_STATE) {
-        if (value === Media.MEDIA_STOPPED) {
-            if (media.successCallback) {
-                media.successCallback();
+        if (options) {
+            if (typeof options.limit === 'number' && options.limit > limit) {
+                limit = options.limit;
+            }
+            if (options.mode) { 
+                mode = options.mode;
             }
         }
-        if (media.statusCallback) {
-            media.statusCallback(value);
+        
+        PhoneGap.exec(function(mediaFiles) {
+            successCallback(getMediaFiles(mediaFiles));
+        }, function(error) {
+            Capture.onError(error, errorCallback);
+        }, 'MediaCapture', 'captureImage', [limit, mode]);         
+    };
+    
+    /**
+     * Launch video recorder application and start an operation to record video
+     * clips.
+     * 
+     * @param successCallback
+     *            invoked with a list of MediaFile objects containing captured
+     *            video file properties
+     * @param errorCallback
+     *            invoked with a CaptureError if capture is unsuccessful
+     * @param options
+     *            {CaptureVideoOptions} options for capturing video
+     */
+    Capture.prototype.captureVideo = function(successCallback, errorCallback, options) { 
+        var limit = 1,
+            duration = 0,
+            mode = null;
+
+        if (options) {
+            if (typeof options.limit === 'number' && options.limit > limit) {
+                limit = options.limit;
+            }
+            if (typeof options.duration === 'number' && options.duration > 0) {
+                duration = options.duration;
+            }   
+            if (options.mode) { 
+                mode = options.mode;
+            }
         }
-    }
-    else if (msg === Media.MEDIA_DURATION) {
-        media._duration = value;
-    }
-    else if (msg === Media.MEDIA_ERROR) {
-        if (media.errorCallback) {
-            media.errorCallback(value);
-        }
-    }
-};
-}
+        
+        PhoneGap.exec(function(mediaFiles) {
+            successCallback(getMediaFiles(mediaFiles));
+        }, function(error) {
+            Capture.onError(error, errorCallback);
+        }, 'MediaCapture', 'captureVideo', [limit, duration, mode]);         
+    };
+
+    /**
+     * Launch audio recorder application and start an operation to record audio
+     * clip(s).
+     * 
+     * @param successCallback
+     *            invoked with a list of MediaFile objects containing captured
+     *            audio file properties
+     * @param errorCallback
+     *            invoked with a CaptureError if capture is unsuccessful
+     * @param options
+     *            {CaptureAudioOptions} options for capturing audio
+     */
+    Capture.prototype.captureAudio = function(successCallback, errorCallback, options) { 
+        var limit = 1, 
+            duration = 0,
+            mode = null;
+        
+        if (options) {
+            if (typeof options.limit === 'number' && options.limit > limit) {
+                limit = options.limit;
+            }
+            if (typeof options.duration === 'number' && options.duration > 0) {
+                duration = options.duration;
+            }   
+            if (options.mode) { 
+                mode = options.mode;
+            }
+        }   
+        
+        PhoneGap.exec(function(mediaFiles) {
+            successCallback(getMediaFiles(mediaFiles));
+        }, function(error) {
+            Capture.onError(error, errorCallback);
+        }, 'MediaCapture', 'captureAudio', [limit, duration, mode]);         
+    };
+    
+    /**
+     * Cancels all pending capture operations.
+     */
+    Capture.prototype.cancelCaptures = function() { 
+        PhoneGap.exec(null, null, 'MediaCapture', 'stopCaptures', []);
+    };
+    
+    /**
+     * Define navigator.device.capture object.
+     */
+    PhoneGap.addConstructor(function() {
+        PhoneGap.waitForInitialization(captureId);
+        navigator.device.capture = new Capture();
+    });
+}());

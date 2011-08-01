@@ -369,6 +369,12 @@ function CaptureAudioOptions() {
      */
     PhoneGap.addConstructor(function() {
         PhoneGap.waitForInitialization(captureId);
+		
+        //No way to guarantee order of constructors so just incase this goes first
+		if (typeof navigator.device === 'undefined') {
+            navigator.device = {};
+        }
+		
         navigator.device.capture = new Capture();
     });
 }());

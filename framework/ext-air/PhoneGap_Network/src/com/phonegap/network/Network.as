@@ -9,24 +9,31 @@
 package com.phonegap.network {
     import flash.net.NetworkInfo;
     import flash.net.NetworkInterface;
+	import flash.events.Event;
     
     import webworks.extension.DefaultExtension;
     
     public class Network extends DefaultExtension{
         
-        internal var jsFunctionIDNetwork:Array;
+        private var _jsFunctionCallbackIDs:Array = [];
+		private const FEATURE_ID:Array = [ "com.phonegap" ];
+		
+		public function Network() {
+			//Attach event listener once only
+			NetworkInfo.networkInfo.addEventListener(flash.events.Event.NETWORK_CHANGE, networkChange);    
+		}
+		
+		override public function getFeatureList():Array {
+			return FEATURE_ID;
+		}
         
-        public function SystemEvents(){
-            super();
-            jsFunctionIDNetwork = new Array();
-        }       
-        
-        public function networkStatusChanged(param:String):void{ 
-            jsFunctionIDNetwork[jsFunctionIDNetwork.length] = param;
-           NetworkInfo.NetworkInfo.addEventListener(flash.events.Event.NETWORK_CHANGE, networkChange);       
+        public function getConnectionInfo(param:String):void{ 
+			if(_jsFunctionCallbackIDs.indexOf(param) < 0){
+				_jsFunctionCallbackIDs.push(param);
+			}
         }
         
-        private function networkChange( event:NetworkInfo.networkChange ) : void{
+        private function networkChange( event: Event ) : void {
             
             /**
              * Right now, we only care if there is a connection or not, since PlayBook only has WiFi
@@ -37,22 +44,22 @@ package com.phonegap.network {
             
             var haveCoverage : Boolean = false;
             var networkStatus : String = "offline";
+			var connectionType = "none";
 
-			NetworkInfo.networkInfo.findInterfaces().every(
+			NetworkInfo.networkInfo.findInterfaces().some(
 				function callback(item:NetworkInterface, index:int, vector:Vector.<NetworkInterface>):Boolean {
+					this.webView.executeJavaScript("alert('Network Interface ' + item.name)");
 					haveCoverage = item.active || haveCoverage;
-
-					return !haveCoverage;
+					return haveCoverage;
 				}, this);
 
 			if (haveCoverage) {
 				networkStatus = "online";
+				connectionType = "wifi";
 			}
             
-            var type:Array = new Array(1);
-            type[0] = event.type;
-            for (var i:Number=0; i<jsFunctionIDNetwork.length ; i++){
-                evalJavaScriptEvent(jsFunctionIDNetwork[i], networkStatus);
+            for (var i:Number=0; i<_jsFunctionCallbackIDs.length ; i++){
+                evalJavaScriptEvent(_jsFunctionCallbackIDs[i], [{"type" : connectionType, "event" : networkStatus }] );
             }
         }
     }
