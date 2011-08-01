@@ -27,7 +27,7 @@
         
         cameraAPI = {
             execute: function(action, args, win, fail) {
-                switch(action) {
+                switch (action) {
                     case 'takePicture':
                         blackberry.media.camera.takePicture(win, fail, fail);
                         break;
@@ -41,7 +41,7 @@
 
         deviceAPI = {
             execute: function(action, args, win, fail) {
-                switch(action) {
+                switch (action) {
                     case 'getDeviceInfo':						
                         return { "status" : 1, "message" : {"version" : blackberry.system.softwareVersion,
                                                             "name" : blackberry.system.model,
@@ -101,7 +101,7 @@
                     win(pictureFiles);
 
                     return retAsyncCall; 
-                };
+                }
 
                 switch(action) {
                     case 'getSupportedAudioModes':
