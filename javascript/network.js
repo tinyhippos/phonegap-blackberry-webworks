@@ -1,4 +1,4 @@
-﻿
+
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
@@ -55,8 +55,7 @@ Connection = {
             },
             function(e) {
                 console.log("Error initializing Network Connection: " + e);
-            }
-		);
+            });
     };
 
     /**
@@ -74,7 +73,8 @@ Connection = {
      * Define navigator.network and navigator.network.connection objects
      */
     PhoneGap.addConstructor(function() {
-        navigator.network = {};
+        navigator.network = new Object();
+
         navigator.network.connection = new NetworkConnection();
     });
 }());
