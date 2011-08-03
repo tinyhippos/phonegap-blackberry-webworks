@@ -49,7 +49,6 @@ public final class Device extends Plugin {
 				result = new PluginResult(PluginResult.Status.JSONEXCEPTION, e.getMessage());
 			}					
 		}
-		return result;
 	}
 
 }
