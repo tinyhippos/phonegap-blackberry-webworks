@@ -235,10 +235,6 @@ phonegap.PluginManager = (function (webworksPluginManager) {
     this.PlayBookPluginManager.prototype.pause = function () {};
     this.PlayBookPluginManager.prototype.destroy = function () {};
 
-
-
-
-
     //Instantiate it
     return new PlayBookPluginManager();
 })(new PluginManager());
