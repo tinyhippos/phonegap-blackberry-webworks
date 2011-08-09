@@ -1,4 +1,4 @@
-﻿/*
+/*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  * 
@@ -41,7 +41,7 @@ public final class Device extends Plugin {
 				JSONObject device = new JSONObject();
 				device.put( FIELD_PLATFORM, new String(DeviceInfo.getPlatformVersion() ) );
 				device.put( FIELD_UUID, new Integer( DeviceInfo.getDeviceId()) );
-				device.put( FIELD_PHONEGAP, new String(1.0.0 ) );
+				device.put( FIELD_PHONEGAP, new String( "1.0.0" ) );
 				device.put( FIELD_NAME, new String(DeviceInfo.getDeviceName()) );
 				device.put( FIELD_VERSION, new String(DeviceInfo.getSoftwareVersion()) );
 				result = new PluginResult(PluginResult.Status.OK, device);
@@ -49,6 +49,8 @@ public final class Device extends Plugin {
 				result = new PluginResult(PluginResult.Status.JSONEXCEPTION, e.getMessage());
 			}					
 		}
+		
+		return result;
 	}
 
 }

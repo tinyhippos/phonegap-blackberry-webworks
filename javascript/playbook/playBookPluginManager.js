@@ -213,11 +213,11 @@ phonegap.PluginManager = (function (webworksPluginManager) {
             'Notification' : notificationAPI
         };
 
-    this.PlayBookPluginManager = function () {
+    phonegap.PlayBookPluginManager = function () {
         PhoneGap.onNativeReady.fire();
     };
 
-    this.PlayBookPluginManager.prototype.exec = function (win, fail, clazz, action, args) {
+    phonegap.PlayBookPluginManager.prototype.exec = function (win, fail, clazz, action, args) {
         var wwResult = webworksPluginManager.exec(win, fail, clazz, action, args);
 
         //We got a sync result or a not found from WW that we can pass on to get a native mixin
@@ -231,10 +231,10 @@ phonegap.PluginManager = (function (webworksPluginManager) {
         return wwResult;
     };
 
-    this.PlayBookPluginManager.prototype.resume = function () {};
-    this.PlayBookPluginManager.prototype.pause = function () {};
-    this.PlayBookPluginManager.prototype.destroy = function () {};
+    phonegap.PlayBookPluginManager.prototype.resume = function () {};
+    phonegap.PlayBookPluginManager.prototype.pause = function () {};
+    phonegap.PlayBookPluginManager.prototype.destroy = function () {};
 
     //Instantiate it
-    return new PlayBookPluginManager();
-})(new PluginManager());
+    return new phonegap.PlayBookPluginManager();
+}(new phonegap.WebWorksPluginManager()));
