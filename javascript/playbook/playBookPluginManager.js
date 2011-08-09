@@ -131,7 +131,8 @@ phonegap.PluginManager = (function (webworksPluginManager) {
                 case 'release':
                     if (audio) {
                         audioObjects[id] = undefined;
-                        delete audio;
+						audio.src = undefined;
+                        //delete audio;
                     }
 
                     result = {"status" : 1, "message" : "Media resources released"};
