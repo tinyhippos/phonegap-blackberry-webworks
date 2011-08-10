@@ -6,10 +6,6 @@
  * Copyright (c) 2011, Research In Motion Limited.
  */
 
-//BlackBerry attaches the Java plugin manager at phonegap.PluginManager, we go to the same
-//spot for compatibility
-if (!window.phonegap) { window.phonegap = {}; }
-
 window.phonegap.PluginManager = (function (webworksPluginManager) {
     "use strict";
 

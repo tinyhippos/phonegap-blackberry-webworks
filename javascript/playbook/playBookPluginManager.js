@@ -7,8 +7,6 @@
  * Copyright (c) 2011, Research In Motion Limited.
  */
 
-if (!window.phonegap) { window.phonegap = {}; }
-
 phonegap.PluginManager = (function (webworksPluginManager) {
     "use strict";
 
