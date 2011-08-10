@@ -7,8 +7,6 @@
  * Copyright (c) 2011, Research In Motion Limited.
  */
 
-if (!window.phonegap) { window.phonegap = {}; }
-
 phonegap.PluginManager = (function (webworksPluginManager) {
     "use strict";
 
@@ -131,7 +129,8 @@ phonegap.PluginManager = (function (webworksPluginManager) {
                 case 'release':
                     if (audio) {
                         audioObjects[id] = undefined;
-                        delete audio;
+						audio.src = undefined;
+                        //delete audio;
                     }
 
                     result = {"status" : 1, "message" : "Media resources released"};
@@ -179,7 +178,7 @@ phonegap.PluginManager = (function (webworksPluginManager) {
 
         notificationAPI = {
             execute: function (webWorksResult, action, args, win, fail) {
-				if (args.length !== 2) {
+				if (args.length !== 3) {
 					return {"status" : 9, "message" : "Notification action - " + action + " arguments not found"};
 
 				}
@@ -213,11 +212,11 @@ phonegap.PluginManager = (function (webworksPluginManager) {
             'Notification' : notificationAPI
         };
 
-    this.PlayBookPluginManager = function () {
+    phonegap.PlayBookPluginManager = function () {
         PhoneGap.onNativeReady.fire();
     };
 
-    this.PlayBookPluginManager.prototype.exec = function (win, fail, clazz, action, args) {
+    phonegap.PlayBookPluginManager.prototype.exec = function (win, fail, clazz, action, args) {
         var wwResult = webworksPluginManager.exec(win, fail, clazz, action, args);
 
         //We got a sync result or a not found from WW that we can pass on to get a native mixin
@@ -231,10 +230,10 @@ phonegap.PluginManager = (function (webworksPluginManager) {
         return wwResult;
     };
 
-    this.PlayBookPluginManager.prototype.resume = function () {};
-    this.PlayBookPluginManager.prototype.pause = function () {};
-    this.PlayBookPluginManager.prototype.destroy = function () {};
+    phonegap.PlayBookPluginManager.prototype.resume = function () {};
+    phonegap.PlayBookPluginManager.prototype.pause = function () {};
+    phonegap.PlayBookPluginManager.prototype.destroy = function () {};
 
     //Instantiate it
-    return new PlayBookPluginManager();
-})(new PluginManager());
+    return new phonegap.PlayBookPluginManager();
+}(new phonegap.WebWorksPluginManager()));

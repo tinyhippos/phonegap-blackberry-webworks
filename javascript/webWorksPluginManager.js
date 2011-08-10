@@ -1,9 +1,14 @@
+
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  *
  * Copyright (c) 2011, Research In Motion Limited.
  */
+ 
+ //BlackBerry attaches the Java plugin manager at phonegap.PluginManager, we go to the same
+//spot for compatibility
+if (!window.phonegap) { window.phonegap = {}; }
 
 (function () {
     "use strict";
@@ -22,46 +27,46 @@
         },
 
         mediaCaptureAPI = {
-            execute: function(action, args, win, fail) {
+            execute: function (action, args, win, fail) {
                 var limit = args[0],
                     pictureFiles = [],
                     captureMethod;
 
                 function captureCB(filePath) {
                     var mediaFile;
-                    
+
                     if (filePath) {
                         mediaFile = new MediaFile();
                         mediaFile.fullPath = filePath;
                         pictureFiles.push(mediaFile);
                     }
-        
+
                     if (limit > 0) {
                         limit--;
-                        blackberry.media.camera[captureMethod](takePictureCB, fail, fail);
+                        blackberry.media.camera[captureMethod](win, fail, fail);
                         return;
                     }
 
                     win(pictureFiles);
 
-                    return retAsyncCall; 
+                    return retAsyncCall;
                 }
 
-                switch(action) {
-                    case 'getSupportedAudioModes':
-                    case 'getSupportedImageModes':
-                    case 'getSupportedVideoModes':
-                        return {"status": PhoneGap.callbackStatus.OK, "message": []};
-                    case 'captureImage':
-                        captureMethod = "takePicture";
-                        captureCB();
-                        break;
-                    case 'captureVideo':
-                        captureMethod = "takeVideo";
-                        captureCB();
-                        break;
-                    case 'captureAudio':
-                        return {"status": PhonGap.callbackStatus.INVALID_ACTION, "message": "captureAudio is not currently supported"};
+                switch (action) {
+                case 'getSupportedAudioModes':
+                case 'getSupportedImageModes':
+                case 'getSupportedVideoModes':
+                    return {"status": PhoneGap.callbackStatus.OK, "message": []};
+                case 'captureImage':
+                    captureMethod = "takePicture";
+                    captureCB();
+                    break;
+                case 'captureVideo':
+                    captureMethod = "takeVideo";
+                    captureCB();
+                    break;
+                case 'captureAudio':
+                    return {"status": PhoneGap.callbackStatus.INVALID_ACTION, "message": "captureAudio is not currently supported"};
                 }
 
                 return retAsyncCall;
@@ -73,10 +78,10 @@
             'MediaCapture' : mediaCaptureAPI
         };
 
-    this.PluginManager = function () {
-    };
+	phonegap.WebWorksPluginManager = function () {
+	};
 
-    this.PluginManager.prototype.exec = function (win, fail, clazz, action, args) {
+    phonegap.WebWorksPluginManager.prototype.exec = function (win, fail, clazz, action, args) {
         if (plugins[clazz]) {
             return plugins[clazz].execute(action, args, win, fail);
         }

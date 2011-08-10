@@ -1,13 +1,10 @@
+
 /*
  * PhoneGap is available under *either* the terms of the modified BSD license *or* the
  * MIT License (2008). See http://opensource.org/licenses/alphabetical for full text.
  *
  * Copyright (c) 2011, Research In Motion Limited.
  */
-
-//BlackBerry attaches the Java plugin manager at phonegap.PluginManager, we go to the same
-//spot for compatibility
-if (!window.phonegap) { window.phonegap = {}; }
 
 window.phonegap.PluginManager = (function (webworksPluginManager) {
     "use strict";
@@ -27,10 +24,10 @@ window.phonegap.PluginManager = (function (webworksPluginManager) {
         },
         plugins = {'Logger': loggerAPI};
 
-    this.BlackBerryPluginManager = function () {
+    phonegap.BlackBerryPluginManager = function () {
     };
 
-    this.BlackBerryPluginManager.prototype.exec = function (win, fail, clazz, action, args) {
+    phonegap.BlackBerryPluginManager.prototype.exec = function (win, fail, clazz, action, args) {
         var result = webworksPluginManager.exec(win, fail, clazz, action, args);
 
         //We got a sync result or a not found from WW that we can pass on to get a native mixin
@@ -48,7 +45,7 @@ window.phonegap.PluginManager = (function (webworksPluginManager) {
         return result;
     };
 
-    this.BlackBerryPluginManager.prototype.subExec = function (win, fail, clazz, action, args) {
+    phonegap.BlackBerryPluginManager.prototype.subExec = function (win, fail, clazz, action, args) {
         var callbackId = clazz + PhoneGap.callbackId++,
             origResult,
             evalResult,
@@ -106,10 +103,10 @@ window.phonegap.PluginManager = (function (webworksPluginManager) {
         return execResult;
     };
 
-    this.BlackBerryPluginManager.prototype.resume = com.phonegap.JavaPluginManager.resume;
-    this.BlackBerryPluginManager.prototype.pause = com.phonegap.JavaPluginManager.pause;
-    this.BlackBerryPluginManager.prototype.destroy = com.phonegap.JavaPluginManager.destroy;
+    phonegap.BlackBerryPluginManager.prototype.resume = com.phonegap.JavaPluginManager.resume;
+    phonegap.BlackBerryPluginManager.prototype.pause = com.phonegap.JavaPluginManager.pause;
+    phonegap.BlackBerryPluginManager.prototype.destroy = com.phonegap.JavaPluginManager.destroy;
 
     //Instantiate it
-    return new this.BlackBerryPluginManager();
-})(new PluginManager());
+    return new phonegap.BlackBerryPluginManager();
+}(new phonegap.WebWorksPluginManager()));
