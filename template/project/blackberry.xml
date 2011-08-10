@@ -18,8 +18,9 @@
         <bbwp code-sign="true" />
         <exec executable="${properties.blackberry.bbwp.dir}/bin/JavaLoader.exe" dir="." failonerror="true">
             <arg value="-u" />
-            <arg value="load" />
-            <arg file="${build.dir}/StandardInstall/${cod.name}.cod" />
+			<arg value="-w${properties.blackberry.sim.password}" />
+            <arg value="load" />			
+            <arg file="${build.dir}/StandardInstall/${cod.name}.cod" />			
         </exec>
     </target>
     
@@ -125,7 +126,7 @@
         <!-- Copy the WebWorks application -->
         <mkdir dir="${widget.dir}" />
         <copy todir="${widget.dir}" overwrite="true">
-            <fileset dir="www" />
+            <fileset dir="www" excludes="ext-air/**,playbook/**"/>
         </copy>
         
         <!-- Package the WebWorks app by zipping the widget dir. -->
