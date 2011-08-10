@@ -180,7 +180,7 @@ phonegap.PluginManager = (function (webworksPluginManager) {
 
         notificationAPI = {
             execute: function (webWorksResult, action, args, win, fail) {
-				if (args.length !== 2) {
+				if (args.length !== 3) {
 					return {"status" : 9, "message" : "Notification action - " + action + " arguments not found"};
 
 				}
